@@ -32,10 +32,16 @@ def playSetGame(deck, players):
    
 def play():
     # get player(s) name
+    name = input("What is your name? ")
     # make deck & shuffle it
-    # call playSetGame
-    # see if player want to play another game
-    pass
+    cards = SetStack()
+    cards.shuffle()
+    playSetGame(deck, name) # call playSetGame
+    choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
+    while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
+        playSetGame(deck, name) # Keep playing games
+        choice = input("Do you want to play again? (y/n) ") # Play again?
+    return # exit game
 
 def main():
     # sample code using Card, StackOfCards, Player classes
