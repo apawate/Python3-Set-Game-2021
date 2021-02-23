@@ -1,5 +1,5 @@
 '''
-Names: Steph Curry and Klay Thompson
+Names: Agastya Pawate and Advaita Guruprasad 
 
 Snapshot #1: Finished all the 3 classes and tested them out and they
 seem to work...???
