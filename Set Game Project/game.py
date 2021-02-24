@@ -36,10 +36,10 @@ def play():
     # make deck & shuffle it
     cards = SetStack()
     cards.shuffle()
-    playSetGame(deck, name) # call playSetGame
+    playSetGame(cards, name) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
     while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
-        playSetGame(deck, name) # Keep playing games
+        playSetGame(cards, name) # Keep playing games
         choice = input("Do you want to play again? (y/n) ") # Play again?
     return # exit game
 
@@ -63,7 +63,7 @@ def main():
 
     player = Player("Mark") 		# make a player called Mark
     players = [ player ]
-    
+    play() 
     playSetGame(deck, players)
     
 if __name__ == "__main__":
