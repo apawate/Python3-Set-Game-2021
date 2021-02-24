@@ -19,24 +19,28 @@ class SetStack(StackOfCards):
 #   players - list of Player
 # Return boolean: True to continue game, False to end game
 def playRound(deck, upCards, players):
-    pass
+    upCards.displayInRows()
+
 
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
 #   players - list of Player
 # No return value
 def playSetGame(deck, players):
-    # deal 12 cards from the deck
-    # repeatedly call playRound until the game is over
-    pass
+    upCards = SetStack()
+    for i in range(12):
+        upCards.add(deck.deal()) # deal 12 cards from the deck
+    while playRound:
+        playRound(deck, upCards, players)  # repeatedly call playRound until the game is over
    
 def play():
     # get player(s) name
     name = input("What is your name? ")
+    namelist = [name]
     # make deck & shuffle it
     cards = SetStack()
     cards.shuffle()
-    playSetGame(cards, name) # call playSetGame
+    playSetGame(cards, namelist) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
     while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
         playSetGame(cards, name) # Keep playing games
