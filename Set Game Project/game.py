@@ -11,13 +11,33 @@ from stack_of_cards import StackOfCards
 from player import Player
 
 class SetStack(StackOfCards):
-    pass
+    def isSet(self):
+        #self.size = size
+        #self.col 
+        c1 = self.getCard(0)
+        c2 = self.getCard(1)
+        c3 = self.getCard(2)
+        if valid(c1.getValueOf('COLOR'), c2.getValueOf('COLOR'), c3.getValueOf('COLOR')) and valid(c1.getValueOf('COUNT'), c2.getValueOf('COUNT'), c3.getValueOf('COUNT')) and valid(c1.getValueOf('SHAPE'), c2.getValueOf('SHAPE'), c3.getValueOf('SHAPE')) and valid(c1.getValueOf('VALUE'), c2.getValueOf('VALUE'), c3.getValueOf('VALUE')) and self.size() == 3:
+            return True
+        else:
+            return False
     
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
 #   upCards - SetStack that are face up
 #   players - list of Player
 # Return boolean: True to continue game, False to end game
+
+def valid(in_one, in_two, in_three):
+    if in_one == in_two and in_two == in_three:
+        return True
+    elif in_one != in_two and in_two != in_three and in_three != in_one:
+        return True
+    else:
+        return False
+
+
+
 def playRound(deck, upCards, players):
     #upCards.displayInRows()
     return False
