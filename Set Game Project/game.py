@@ -1,8 +1,7 @@
 '''
 Names: Agastya Pawate and Advaita Guruprasad 
 
-Snapshot #1: Finished all the 3 classes and tested them out and they
-seem to work...???
+Snapshot #1: Finished everything except playRound(), which is still pending and will hopefully be done by Friday...
 
 '''
 import re
