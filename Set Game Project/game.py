@@ -21,6 +21,17 @@ class SetStack(StackOfCards):
             return True
         else:
             return False
+    def displayInRows(self):
+        titles = ['A', 'B', 'C']
+        for x in range(4):
+            print("   ", x, end='    ')
+        print()
+        for i in range(3):
+            print(titles[i], end=' ')
+            for y in range(4):
+                print(self.deal(), end='    ')
+            print()
+
     
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
@@ -39,7 +50,8 @@ def valid(in_one, in_two, in_three):
 
 
 def playRound(deck, upCards, players):
-    #upCards.displayInRows()
+    upCards.displayInRows()
+    
     return False
 
 # Input:
@@ -87,17 +99,8 @@ def main():
     deck.add(c)						# add the card to the deck
     deck.add(Card(1, 2, 2, 2))		# add another card to the deck
     deck.add(Card(2, 0, 2, 1))		# add another card to the deck
-    deck.add(Card(1, 0, 2, 2))
-    deck.add(Card(2, 2, 2, 2))
-    deck.add(Card(1, 2, 2, 1))
-    deck.add(Card(0, 2, 2, 1))
-    deck.add(Card(0, 2, 2, 2))
-    deck.add(Card(1, 2, 2, 0))
-    deck.add(Card(0, 0, 2, 1))
-    deck.add(Card(0, 0, 2, 2))
-    deck.add(Card(0, 2, 2, 0))
     print(deck)						# should print three cards
-    #print(deck.isSet())			# should print True
+    print(deck.isSet())			# should print True
     #deck.displayInRows()
 
 
