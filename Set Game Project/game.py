@@ -49,8 +49,16 @@ def valid(in_one, in_two, in_three):
 
 
 def playRound(deck, upCards, players):
-    upCards.displayInRows()
-    
+  score = 0 
+  currentSet = []
+  print("A new game has begun!") 
+  for x in range(len(players)): 
+    print("Hello, {}!".format(players[x].getName())) 
+    upCards.displayInRows() 
+    isSet = input("Can you find a set? (y/n) ")
+    if isSet == "y":
+      describeSet = input("What is the set? ")
+      describeSet.split(' ')
     return False
 
 # Input:
@@ -81,7 +89,7 @@ def play():
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
     while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
-        playSetGame(cards, name) # Keep playing games
+        playSetGame(cards, players) # Keep playing games
         choice = input("Do you want to play again? (y/n) ") # Play again?
     return # exit game
 
@@ -109,3 +117,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+    
