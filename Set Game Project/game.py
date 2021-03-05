@@ -23,7 +23,7 @@ class SetStack(StackOfCards):
     def displayInRows(self):
         titles = ['A', 'B', 'C']
         whereiscard = 0
-        for x in range(4):
+        for x in range(1, 5):
             print("   ", x, end='    ')
         print()
         for i in range(3):
@@ -133,25 +133,6 @@ def play():
     return # exit game
 
 def main():
-    # sample code using Card, StackOfCards, Player classes
-    c = Card(0, 1, 2, 0)				# make a Set card with attributes of
-							# value: 0
-							# color: 1
-							# count: 2
-							# shape: 0
-    print(c)						# will print out x x x
-
-    deck = SetStack()  				# make a stack of cards
-    deck.add(c)						# add the card to the deck
-    deck.add(Card(1, 2, 2, 2))		# add another card to the deck
-    deck.add(Card(2, 0, 2, 1))		# add another card to the deck
-    print(deck)						# should print three cards
-    print(deck.isSet())			# should print True
-    #deck.displayInRows()
-
-
-    player = Player("Mark") 		# make a player called Mark
-    players = [ player ]
     play() 
     
 if __name__ == "__main__":
