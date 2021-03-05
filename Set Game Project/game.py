@@ -22,13 +22,15 @@ class SetStack(StackOfCards):
             return False
     def displayInRows(self):
         titles = ['A', 'B', 'C']
+        whereiscard = 0
         for x in range(4):
             print("   ", x, end='    ')
         print()
         for i in range(3):
             print(titles[i], end=' ')
             for y in range(4):
-                print(self.deal(), end='    ')
+                print(self.getCard(whereiscard), end='    ')
+                whereiscard += 1
             print()
 
     
@@ -46,19 +48,56 @@ def valid(in_one, in_two, in_three):
     else:
         return False
 
+# position logic
+#    1    2    3    4
+# A  0    1    2    3
+# B  4    5    6    7
+# C  8    9    10   11
 
+def converttoreference(pos, stack):
+  letters = ["a", "b", "c"]
+  letter_indx = pos//(stack.size()//3)
+  number = pos%(stack.size()//3) + 1
+  reference = letters[letter_indx] + str(number)
+  return reference
+  
 
 def playRound(deck, upCards, players):
   score = 0 
-  currentSet = []
+  currentSet = SetStack() 
   print("A new game has begun!") 
   for x in range(len(players)): 
     print("Hello, {}!".format(players[x].getName())) 
     upCards.displayInRows() 
     isSet = input("Can you find a set? (y/n) ")
     if isSet == "y":
-      describeSet = input("What is the set? ")
-      describeSet.split(' ')
+      description = input("What is the set? ")
+      desc_one = description[0:2]
+      desc_two = description[3:5]
+      desc_three = description[6:8]
+      describeSet = [desc_one, desc_two, desc_three]
+      pos = 0
+      while pos < upCards.size():
+        if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
+          currentSet.add(upCards.getCard(pos))
+          pos += 1
+        else:
+          pos += 1
+     
+        
+      
+      if currentSet.isSet():
+        print(currentSet, end="")
+        print("This is a set!")
+        score = score + 1
+      else:
+        print("Sorry, that isn't a set.")
+    elif isSet == "n":
+      if upCards.size() < 21:
+        for x in range(3):
+          upCards.add(deck.deal())
+      else:
+        print("In 21 cards, there's a 100% chance of finding a set. Find a set already!")
     return False
 
 # Input:
@@ -117,4 +156,3 @@ def main():
     
 if __name__ == "__main__":
     main()
-    
