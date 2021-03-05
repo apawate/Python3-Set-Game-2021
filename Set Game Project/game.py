@@ -3,6 +3,8 @@ Names: Agastya Pawate and Advaita Guruprasad
 
 Snapshot #1: Finished everything except playRound(), which is still pending and will hopefully be done by Friday...
 
+Snapshot #2: Finished playRound() and achieved very basic functionality. The next step will be to get the scoring and rounds/games system in, which will require a lot of loops and stuff.
+
 '''
 import re
 from card import Card
