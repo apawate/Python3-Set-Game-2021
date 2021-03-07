@@ -9,51 +9,45 @@ Snapshot #2: Finished playRound() and achieved very basic functionality. The nex
 import re
 from card import Card
 from stack_of_cards import StackOfCards
-from player import Player
+from player import Player   # Import all the necessary libraries
 
-class SetStack(StackOfCards):
-    def isSet(self):
+class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
+    def isSet(self): # Is the stack a set?
         #self.size = size
         #self.col 
-        c1 = self.getCard(0)
-        c2 = self.getCard(1)
-        c3 = self.getCard(2)
-        if valid(c1.getValueOf('COLOR'), c2.getValueOf('COLOR'), c3.getValueOf('COLOR')) and valid(c1.getValueOf('COUNT'), c2.getValueOf('COUNT'), c3.getValueOf('COUNT')) and valid(c1.getValueOf('SHAPE'), c2.getValueOf('SHAPE'), c3.getValueOf('SHAPE')) and valid(c1.getValueOf('VALUE'), c2.getValueOf('VALUE'), c3.getValueOf('VALUE')) and self.size() == 3:
+        c1 = self.getCard(0) # Get first card
+        c2 = self.getCard(1) # Get second card
+        c3 = self.getCard(2) # Get third card
+
+        if valid(c1.getValueOf('COLOR'), c2.getValueOf('COLOR'), c3.getValueOf('COLOR')) and valid(c1.getValueOf('COUNT'), c2.getValueOf('COUNT'), c3.getValueOf('COUNT')) and valid(c1.getValueOf('SHAPE'), c2.getValueOf('SHAPE'), c3.getValueOf('SHAPE')) and valid(c1.getValueOf('VALUE'), c2.getValueOf('VALUE'), c3.getValueOf('VALUE')) and self.size() == 3: # Tests if the colors, counts, shapes and values all match up per the set game rules (using valid function below)
             return True
         else:
             return False
-    def displayInRows(self):
-        titles = ['A', 'B', 'C']
-        whereiscard = 0
-        for x in range(1, self.size()//3 + 1):
+    def displayInRows(self): # Display in rows, which Advaita wrote and Agastya modified slightly to allow for multiple deck sizes
+        titles = ['A', 'B', 'C'] # Row titles
+        whereiscard = 0 
+        for x in range(1, self.size()//3 + 1): # Agastya added the self.size()//3 + 1 to allow for different deck sizes, this loop prints the column titles 
             print("   ", x, end='    ')
-        print()
+        print() # Newline
         for i in range(3):
-            print(titles[i], end=' ')
-            for y in range(self.size()//3):
-                print(self.getCard(whereiscard), end='    ')
-                whereiscard += 1
-            print()
+            print(titles[i], end=' ') # Print row titles (A, B, C)
+            for y in range(self.size()//3): 
+                print(self.getCard(whereiscard), end='    ') 
+                whereiscard += 1 # Cycle through the deck, adding a card at each position in the grid
+            print() # Newline
 
 
-cheatStack = SetStack()
+cheatStack = SetStack() # Agastya's cheat code :)
 for inp_one in range(3):
        for inp_two in range(3):
            for inp_three in range(3):
                for inp_four in range(3):
-                   cheatStack.add(Card(inp_one, inp_two, inp_three, inp_four))
+                   cheatStack.add(Card(inp_one, inp_two, inp_three, inp_four)) #Generate a stack, but don't shuffle it
 
-
-# Input:
-#   deck - SetStack which is the deck to draw new cards from
-#   upCards - SetStack that are face up
-#   players - list of Player
-# Return boolean: True to continue game, False to end game
-
-def valid(in_one, in_two, in_three):
-    if in_one == in_two and in_two == in_three:
+def valid(in_one, in_two, in_three): # Function to determine whether a set of numbers follows the set game rules (used in isSet())
+    if in_one == in_two and in_two == in_three: # If the values are equal to each other, return True
         return True
-    elif in_one != in_two and in_two != in_three and in_three != in_one:
+    elif in_one != in_two and in_two != in_three and in_three != in_one: # If all the values are different from each other, return True
         return True
     else:
         return False
@@ -64,9 +58,9 @@ def valid(in_one, in_two, in_three):
 # B  4    5    6    7
 # C  8    9    10   11
 
-def converttoreference(pos, stack):
-  letters = ["a", "b", "c"]
-  letter_indx = pos//(stack.size()//3)
+def converttoreference(pos, stack): # Converts a number position as listed above (0, 1, 2...) to the (a1, b2, c3...) format
+  letters = ["a", "b", "c"] # Possible letters
+  letter_indx = pos//(stack.size()//3) # Determines which letter is going to be used, uses the number of cards per row
   number = pos%(stack.size()//3) + 1
   reference = letters[letter_indx] + str(number)
   return reference
