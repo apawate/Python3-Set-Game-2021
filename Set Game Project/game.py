@@ -133,10 +133,8 @@ def playRound(deck, upCards, players):
         while pos < upCards.size():
             if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
                 currentSet.add(upCards.getCard(pos))
-                print(currentSet)
                 pos += 1
             else:
-                print(currentSet)
                 pos += 1
      
         
