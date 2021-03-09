@@ -129,7 +129,8 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         score -= 1 # Lower the score by 1 every time the user types "n"
 
       elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
-          print("Game over!") # End the game 
+          print("Game over!") # End the game
+          keepPlaying = False
 
       elif description == "q": # If the user wants to quit:
           keepPlaying = False # End the loop
@@ -163,8 +164,20 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         if currentSet.isSet():
             print(currentSet, end=" ")
             print("This is a set!")
+            tobedeleted = []
             for ref in describeSet:
-                upCards.remove(converttopos(ref, upCards))
+                tobedeleted.append(converttopos(ref, upCards))
+            if tobedeleted[1] > tobedeleted[0]:
+                tobedeleted[1] = tobedeleted[1] - 1
+            if tobedeleted[2] > tobedeleted[0]:
+                if tobedeleted[2] > tobedeleted[1]:
+                    tobedeleted[2] = tobedeleted[2] - 2
+                else:
+                    tobedeleted[2] = tobedeleted[2] - 1
+            elif tobedeleted[2] > tobedeleted[1]:
+                tobedeleted[2] = tobedeleted[2] - 1
+            for item in tobedeleted:
+                upCards.remove(item)
             if upCards.size() == 9 and deck.size() > 0:
                 for b in range(3):
                     upCards.add(deck.deal())
