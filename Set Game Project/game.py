@@ -5,7 +5,10 @@ Snapshot #1: Finished everything except playRound(), which is still pending and 
 
 Snapshot #2: Finished playRound() and achieved very basic functionality. The next step will be to get the scoring and rounds/games system in, which will require a lot of loops and stuff.
 
+Snapshot #3: Actual functionality is achieved! I think it works fully now. *virtual high five to Advaita*
+
 '''
+import random
 import re
 from card import Card
 from stack_of_cards import StackOfCards
@@ -42,7 +45,7 @@ for inp_one in range(3):
        for inp_two in range(3):
            for inp_three in range(3):
                for inp_four in range(3):
-                   cheatStack.add(Card(inp_one, inp_two, inp_three, inp_four)) #Generate a stack, but don't shuffle it
+                   cheatStack.add(Card(inp_one, inp_two, inp_three, inp_four)) # Generate a stack, but don't shuffle it
 
 def valid(in_one, in_two, in_three): # Function to determine whether a set of numbers follows the set game rules (used in isSet())
     if in_one == in_two and in_two == in_three: # If the values are equal to each other, return True
@@ -61,11 +64,11 @@ def valid(in_one, in_two, in_three): # Function to determine whether a set of nu
 def converttoreference(pos, stack): # Converts a number position as listed above (0, 1, 2...) to the (a1, b2, c3...) format
   letters = ["a", "b", "c"] # Possible letters
   letter_indx = pos//(stack.size()//3) # Determines which letter is going to be used, uses the number of cards per row
-  number = pos%(stack.size()//3) + 1
-  reference = letters[letter_indx] + str(number)
+  number = pos%(stack.size()//3) + 1 # Determines what the number after the letter is going to be
+  reference = letters[letter_indx] + str(number) # Put the reference 
   return reference
   
-def converttopos(ref, stack):
+def converttopos(ref, stack): # Does the opposite of the above function, converts a reference into a position
     mult = 0
     if ref[0] == "b":
         mult = 1
@@ -74,56 +77,80 @@ def converttopos(ref, stack):
     pos = mult * (stack.size()//3) + int(ref[1]) - 1
     return pos
 
+# def setInDeck(deck):
+  #   check all the possible combinations of 3 cards in this deck until a set is found
+def setInDeck(deck):
+  for i in range(deck.size()):
+    for j in range(deck.size()):
+      for k in range(deck.size()):
+        check = SetStack()  
+        if i == j or j == k or i == k:
+          pass
+        else:
+          check.add(deck.getCard(i))
+          check.add(deck.getCard(j))
+          check.add(deck.getCard(k))
+          if check.isSet():
+            return True
+          else:
+            continue
+  return False
+      # Nvm this looks really hard, I'll try and do it on my own time
+        #What should i do then
+        # Comment the code below, I already did most of it but there is still a bit left to do 
+        # Then just try and find bugs in the code, because I'm sure that there are some 
+        # I have some feature improvement ideas I'll communicate over hangouts later on, that's when we'll really need to work hard again        
 
-def playRound(deck, upCards, players):
+
+def playRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
   score = 0 
   print("A new game has begun!") 
-  for x in range(len(players)): 
-    print("Hello, {}!".format(players[x].getName())) 
-  keepPlaying = True
+  for x in range(len(players)): # For each player in the "players" list:
+    print("Hello, {}!".format(players[x].getName())) # Greet them
+  keepPlaying = True 
   cheat = False
-  while keepPlaying:
-      currentSet = SetStack()
-      if cheat:
-          deck = cheatStack
-          upCards = SetStack()
+  while keepPlaying: 
+      currentSet = SetStack() # Clear the current set
+      if cheat: # If the cheat code has been entered
+          deck = cheatStack # Set the deck to the cheatStack instead of the normal shuffled deck
+          upCards = SetStack() # Reset upCards
           for m in range(12):
-              upCards.add(deck.deal())
+              upCards.add(deck.deal()) # Deal out the upCards from the new cheat deck
           cheat = False
-      upCards.displayInRows()
+      upCards.displayInRows() # Display the upCards
       description = input("What is the set (q to exit, n if you can't find it) ? ")
 
       if description == "n":
-        if upCards.size() < 21:
+        if upCards.size() < 21: # If the deck of cards is less than 21:
             for x in range(3):
-                upCards.add(deck.deal())
+                upCards.add(deck.deal()) # Deal three more
         else:
-            print("In 21 cards, there's a 100% chance of finding a set. Find a set already!")
-        score -= 1
+            print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
+        score -= 1 # Lower the score by 1 every time the user types "n"
 
-      elif deck.size() == 0:
-          print("Game over!")
+      elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
+          print("Game over!") # End the game 
 
-      elif description == "q":
-          keepPlaying = False
-          score = 0
-      elif description == "score":
-          print("Your score is", score)
-      elif description == "size":
-          print("The size of the deck is", deck.size())
-      elif description == "asdf":
+      elif description == "q": # If the user wants to quit:
+          keepPlaying = False # End the loop
+          score = 0 # Reset the score
+      elif description == "score": # If "score" keyword is entered
+          print("Your score is", score) # Tell the user their score
+      elif description == "size": # If "size" keyword is entered
+          print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
+      elif description == "asdf": # Cheat code :P
           print("Congratulations.")
           print("Cheat mode has been enabled!")
-          cheat = True
-      elif description == "aaa":
+          cheat = True # Set cheat to True, run above routine
+      elif description == "aaa": # Another cheat-ish keyword
           for x in range(upCards.size()):
-              upCards.remove(0)
+              upCards.remove(0) # Clear the upCards, allows developers to get to the endgame faster
       else:
-        desc_one = description[0:2]
-        desc_two = description[3:5]
-        desc_three = description[6:8]
-        describeSet = [desc_one, desc_two, desc_three]
-        pos = 0
+        desc_one = description[0:2] # Get the first reference from user
+        desc_two = description[3:5] # Get the second reference
+        desc_three = description[6:8] # Get the third reference
+        describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
+        pos = 0 
         while pos < upCards.size():
             if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
                 currentSet.add(upCards.getCard(pos))
