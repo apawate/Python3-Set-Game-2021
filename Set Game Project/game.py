@@ -7,6 +7,8 @@ Snapshot #2: Finished playRound() and achieved very basic functionality. The nex
 
 Snapshot #3: Actual functionality is achieved! I think it works fully now. *virtual high five to Advaita*
 
+Snapshot #3a: Okay, now it works for real. The positioning bug deleted the wrong cards when a set was found, but I did some tricky debugging and managed to fix it.
+
 '''
 import random
 import re
