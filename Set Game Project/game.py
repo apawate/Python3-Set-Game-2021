@@ -158,6 +158,8 @@ def playRound(deck, upCards, players): # playRound function, the main function t
           for x in range(upCards.size()):
               upCards.remove(0) # Clear the upCards, allows developers to get to the endgame faster
       else:
+        if len(description) != 8:
+          description = input("Type your set again please: ")
         desc_one = description[0:2] # Get the first reference from user
         desc_two = description[3:5] # Get the second reference
         desc_three = description[6:8] # Get the third reference
