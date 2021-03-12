@@ -137,7 +137,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
           print("Game over!") # End the game
           keepPlaying = False
       
-      elif description == "ruheer":
+      elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
           if setInDeck(upCards):
               print("Yes, there is a set here.")
           else:
@@ -165,7 +165,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         desc_three = description[6:8] # Get the third reference
         describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
         pos = 0 
-        while pos < upCards.size():
+        while pos < upCards.size(): # Made by Advaita, finds the card referenced by each position given by the user
             if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
                 currentSet.add(upCards.getCard(pos))
                 pos += 1
@@ -174,13 +174,13 @@ def playRound(deck, upCards, players): # playRound function, the main function t
      
         
       
-        if currentSet.isSet():
+        if currentSet.isSet(): # If the set is a set
             print(currentSet, end=" ")
             print("This is a set!")
-            tobedeleted = []
-            for ref in describeSet:
-                tobedeleted.append(converttopos(ref, upCards))
-            if tobedeleted[1] > tobedeleted[0]:
+            tobedeleted = [] # Cards to be removed (part of the super-tricky debugging by Agastya)
+            for ref in describeSet: # For every reference in describeSet
+                tobedeleted.append(converttopos(ref, upCards)) # Append the numerical pos to the tobedeleted list
+            if tobedeleted[1] > tobedeleted[0]: # This is COMPLICATED: basically the computer runs through this set and deletes each card as it gets to it. Think of it as a tower of coins. The computer finds the coin it wants to remove based on the coin's position in the tower, and deletes that coin. But that makes all the coins above the deleted one come down one level, which changes their position by 1. That's what Agastya tries to mitigate here.
                 tobedeleted[1] = tobedeleted[1] - 1
             if tobedeleted[2] > tobedeleted[0]:
                 if tobedeleted[2] > tobedeleted[1]:
@@ -189,22 +189,22 @@ def playRound(deck, upCards, players): # playRound function, the main function t
                     tobedeleted[2] = tobedeleted[2] - 1
             elif tobedeleted[2] > tobedeleted[1]:
                 tobedeleted[2] = tobedeleted[2] - 1
-            for item in tobedeleted:
+            for item in tobedeleted: # tobedeleted is correct, now all those cards can be removed
                 upCards.remove(item)
-            if upCards.size() == 9 and deck.size() > 0:
+            if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
                 for b in range(3):
                     upCards.add(deck.deal())
             score = score + 1
-        else:
+        else: # If it isn't a set
             print("Sorry, that isn't a set.")
-            score = score - 1
+            score = score - 1 # remove one point from the score
   return False
 
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
 #   players - list of Player
 # No return value
-def playSetGame(deck, players):
+def playSetGame(deck, players): 
     upCards = SetStack()
     keep_playing = True
     for i in range(12):
@@ -232,8 +232,8 @@ def play():
         choice = input("Do you want to play again? (y/n) ") # Play again?
     return # exit game
 
-def main():
-    play() 
+def main(): 
+    play() # Play set!
     
 if __name__ == "__main__":
     main()
