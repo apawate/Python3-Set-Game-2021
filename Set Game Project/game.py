@@ -93,6 +93,7 @@ def setInDeck(deck):
           check.add(deck.getCard(j))
           check.add(deck.getCard(k))
           if check.isSet():
+            print("Your set is: ", check)
             return True
           else:
             continue
@@ -123,6 +124,8 @@ def playRound(deck, upCards, players): # playRound function, the main function t
       description = input("What is the set (q to exit, n if you can't find it) ? ")
 
       if description == "n":
+        if deck.size() == 0:
+            print("No more cards are available.")
         if upCards.size() < 21: # If the deck of cards is less than 21:
             for x in range(3):
                 upCards.add(deck.deal()) # Deal three more
@@ -133,6 +136,12 @@ def playRound(deck, upCards, players): # playRound function, the main function t
       elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
           print("Game over!") # End the game
           keepPlaying = False
+      
+      elif description == "ruheer":
+          if setInDeck(upCards):
+              print("Yes, there is a set here.")
+          else:
+              print("No sets were found here.")
 
       elif description == "q": # If the user wants to quit:
           keepPlaying = False # End the loop
