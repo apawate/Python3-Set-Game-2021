@@ -212,9 +212,11 @@ def playSetGame(deck, players):
    
 def play():
     # get player(s) name
-    name = input("What is your name? ")
-    player = Player(name)
-    players = [player]
+    players = []
+    numOfPlayers = input("How many players do you want?")
+    for i in range(int(numOfPlayers)):
+      name = input("What is your name? ") # You might want to look here, Advaita 
+      players.append(Player(name))
     # make deck & shuffle it
     cards = SetStack()
     for inp_one in range(3):
