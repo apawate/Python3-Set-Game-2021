@@ -15,6 +15,7 @@ import re
 from card import Card
 from stack_of_cards import StackOfCards
 from player import Player   # Import all the necessary libraries
+from urllib.request import urlopen
 
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
     def isSet(self): # Is the stack a set?
@@ -48,6 +49,16 @@ for inp_one in range(3):
            for inp_three in range(3):
                for inp_four in range(3):
                    cheatStack.add(Card(inp_one, inp_two, inp_three, inp_four)) # Generate a stack, but don't shuffle it
+
+def buildRealtimeDeck():
+    realdeck = SetStack()
+    for x in range(81):
+        print(x)
+        html = urlopen("https://setgame.lentil1023.repl.co/deck").read()
+        html = str(html)
+        html = html[2:6]
+        realdeck.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
+    return realdeck
 
 def valid(in_one, in_two, in_three): # Function to determine whether a set of numbers follows the set game rules (used in isSet())
     if in_one == in_two and in_two == in_three: # If the values are equal to each other, return True
@@ -198,6 +209,89 @@ def playRound(deck, upCards, players): # playRound function, the main function t
             score = score - 1
   return False
 
+
+def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
+  score = 0 
+  print("A new game has begun!") 
+  for x in range(len(players)): # For each player in the "players" list:
+    print("Hello, {}!".format(players[x].getName())) # Greet them
+  keepPlaying = True 
+  while keepPlaying: 
+      currentSet = SetStack() # Clear the current set
+      upCards.displayInRows() # Display the upCards
+      status = 0
+      while not status:
+        description = input("What is the set (q to exit, n if you can't find it) ? ")
+
+        if description == "n":
+            if deck.size() == 0:
+                print("No more cards are available.")
+            if upCards.size() < 21: # If the deck of cards is less than 21:
+                for x in range(3):
+                    upCards.add(deck.deal()) # Deal three more
+            else:
+                print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
+            score -= 1 # Lower the score by 1 every time the user types "n"
+
+        elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
+            print("Game over!") # End the game
+            keepPlaying = False
+      
+        elif description == "ruheer":
+            if setInDeck(upCards):
+                print("Yes, there is a set here.")
+            else:
+                print("No sets were found here.")
+
+        elif description == "q": # If the user wants to quit:
+            keepPlaying = False # End the loop
+            score = 0 # Reset the score
+        elif description == "score": # If "score" keyword is entered
+            print("Your score is", score) # Tell the user their score
+        elif description == "size": # If "size" keyword is entered
+            print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
+        else:
+            status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read()))
+            desc_one = description[0:2] # Get the first reference from user
+            desc_two = description[3:5] # Get the second reference
+            desc_three = description[6:8] # Get the third reference
+            describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
+            pos = 0 
+            while pos < upCards.size():
+                if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
+                    currentSet.add(upCards.getCard(pos))
+                    pos += 1
+                else:
+                    pos += 1
+     
+        
+      
+            if currentSet.isSet():
+                print(currentSet, end=" ")
+                print("This is a set!")
+                tobedeleted = []
+                for ref in describeSet:
+                    tobedeleted.append(converttopos(ref, upCards))
+                if tobedeleted[1] > tobedeleted[0]:
+                   tobedeleted[1] = tobedeleted[1] - 1
+                if tobedeleted[2] > tobedeleted[0]:
+                    if tobedeleted[2] > tobedeleted[1]:
+                        tobedeleted[2] = tobedeleted[2] - 2
+                    else:
+                        tobedeleted[2] = tobedeleted[2] - 1
+                elif tobedeleted[2] > tobedeleted[1]:
+                    tobedeleted[2] = tobedeleted[2] - 1
+                for item in tobedeleted:
+                    upCards.remove(item)
+                if upCards.size() == 9 and deck.size() > 0:
+                    for b in range(3):
+                        upCards.add(deck.deal())
+                score = score + 1
+                urlopen("https://setgame.lentil1023.repl.co/win")
+            else:
+                print("Sorry, that isn't a set.")
+                score = score - 1
+  return False
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
 #   players - list of Player
@@ -215,14 +309,18 @@ def play():
     name = input("What is your name? ")
     player = Player(name)
     players = [player]
+    gametype = input("Do you want to play in realtime? (y/n) ")
     # make deck & shuffle it
     cards = SetStack()
-    for inp_one in range(3):
-        for inp_two in range(3):
-            for inp_three in range(3):
-                for inp_four in range(3):
-                    cards.add(Card(inp_one, inp_two, inp_three, inp_four))
-    cards.shuffle()
+    if gametype == "n":
+        for inp_one in range(3):
+            for inp_two in range(3):
+                for inp_three in range(3):
+                    for inp_four in range(3):
+                        cards.add(Card(inp_one, inp_two, inp_three, inp_four))
+        cards.shuffle()
+    else:
+        cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
     while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
