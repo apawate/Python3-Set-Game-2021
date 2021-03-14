@@ -57,6 +57,7 @@ def buildRealtimeDeck():
         html = urlopen("https://setgame.lentil1023.repl.co/deck").read()
         html = str(html)
         html = html[2:6]
+        print(html)
         realdeck.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
     return realdeck
 
