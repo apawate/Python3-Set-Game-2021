@@ -41,6 +41,11 @@ class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
                 print(self.getCard(whereiscard), end='    ') 
                 whereiscard += 1 # Cycle through the deck, adding a card at each position in the grid
             print() # Newline
+    
+    def writeToServer(self):
+        url = "https://setgame.lentil1023.repl.co"
+        for x in range(self.size()):
+            html = urlopen(url + "/setup?card=" + str(self.getCard(x).getValueOf('VALUE')) + str(self.getCard(x).getValueOf('COLOR')) + str(self.getCard(x).getValueOf('COUNT')) + str(self.getCard(x).getValueOf('SHAPE'))).read()
 
 
 cheatStack = SetStack() # Agastya's cheat code :)
@@ -60,6 +65,17 @@ def buildRealtimeDeck():
         print(html)
         realdeck.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
     return realdeck
+
+def buildUpcards():
+    upCards = SetStack()
+    for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/uplen").read())[2:4])):
+        print(x)
+        html = urlopen("https://setgame.lentil1023.repl.co/up").read()
+        html = str(html)
+        html = html[2:6]
+        print(html)
+        realdeck.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
+    return upCards
 
 def valid(in_one, in_two, in_three): # Function to determine whether a set of numbers follows the set game rules (used in isSet())
     if in_one == in_two and in_two == in_three: # If the values are equal to each other, return True
@@ -213,46 +229,48 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
 def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
   score = 0 
+  upCards.writeToServer()
   print("A new game has begun!") 
   for x in range(len(players)): # For each player in the "players" list:
     print("Hello, {}!".format(players[x].getName())) # Greet them
   keepPlaying = True 
   while keepPlaying: 
       currentSet = SetStack() # Clear the current set
+      upCards = buildUpcards()
       upCards.displayInRows() # Display the upCards
-      status = 0
-      while not status:
-        description = input("What is the set (q to exit, n if you can't find it) ? ")
+      status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
+      description = input("What is the set (q to exit, n if you can't find it) ? ")
 
-        if description == "n":
-            if deck.size() == 0:
-                print("No more cards are available.")
-            if upCards.size() < 21: # If the deck of cards is less than 21:
-                for x in range(3):
-                    upCards.add(deck.deal()) # Deal three more
-            else:
-                print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-            score -= 1 # Lower the score by 1 every time the user types "n"
+      if description == "n":
+          if deck.size() == 0:
+              print("No more cards are available.")
+          if upCards.size() < 21: # If the deck of cards is less than 21:
+              for x in range(3):
+                  upCards.add(deck.deal()) # Deal three more
+          else:
+              print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
+          score -= 1 # Lower the score by 1 every time the user types "n"
 
-        elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
-            print("Game over!") # End the game
-            keepPlaying = False
+      elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
+          print("Game over!") # End the game
+          keepPlaying = False
       
-        elif description == "ruheer":
-            if setInDeck(upCards):
-                print("Yes, there is a set here.")
-            else:
-                print("No sets were found here.")
+      elif description == "ruheer":
+          if setInDeck(upCards):
+              print("Yes, there is a set here.")
+          else:
+              print("No sets were found here.")
 
-        elif description == "q": # If the user wants to quit:
-            keepPlaying = False # End the loop
-            score = 0 # Reset the score
-        elif description == "score": # If "score" keyword is entered
-            print("Your score is", score) # Tell the user their score
-        elif description == "size": # If "size" keyword is entered
-            print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
-        else:
-            status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read()))
+      elif description == "q": # If the user wants to quit:
+          keepPlaying = False # End the loop
+          score = 0 # Reset the score
+      elif description == "score": # If "score" keyword is entered
+          print("Your score is", score) # Tell the user their score
+      elif description == "size": # If "size" keyword is entered
+          print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
+      else:
+          status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
+          if status:
             desc_one = description[0:2] # Get the first reference from user
             desc_two = description[3:5] # Get the second reference
             desc_three = description[6:8] # Get the third reference
@@ -289,9 +307,12 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
                         upCards.add(deck.deal())
                 score = score + 1
                 urlopen("https://setgame.lentil1023.repl.co/win")
+                upCards.writeToServer()
             else:
                 print("Sorry, that isn't a set.")
                 score = score - 1
+          else:
+              print("Too late!")
   return False
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
@@ -303,7 +324,7 @@ def playSetGame(deck, players):
     for i in range(12):
         upCards.add(deck.deal()) # deal 12 cards from the deck
     while keep_playing:
-        keep_playing = playRound(deck, upCards, players)  # repeatedly call playRound until the game is over
+        keep_playing = playRealtimeRound(deck, upCards, players)  # repeatedly call playRound until the game is over
    
 def play():
     # get player(s) name
