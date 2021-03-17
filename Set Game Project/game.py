@@ -17,6 +17,8 @@ from stack_of_cards import StackOfCards
 from player import Player   # Import all the necessary libraries
 from urllib.request import urlopen
 
+name = ""
+
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
     def isSet(self): # Is the stack a set?
         #self.size = size
@@ -44,6 +46,7 @@ class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
     
     def writeToServer(self):
         url = "https://setgame.lentil1023.repl.co"
+        urlopen("https://setgame.lentil1023.repl.co/reset")
         for x in range(self.size()):
             html = urlopen(url + "/setup?card=" + str(self.getCard(x).getValueOf('VALUE')) + str(self.getCard(x).getValueOf('COLOR')) + str(self.getCard(x).getValueOf('COUNT')) + str(self.getCard(x).getValueOf('SHAPE'))).read()
 
@@ -58,23 +61,20 @@ for inp_one in range(3):
 def buildRealtimeDeck():
     realdeck = SetStack()
     for x in range(81):
-        print(x)
         html = urlopen("https://setgame.lentil1023.repl.co/deck").read()
         html = str(html)
         html = html[2:6]
-        print(html)
         realdeck.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
     return realdeck
 
 def buildUpcards():
     upCards = SetStack()
-    for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/uplen").read())[2:4])):
-        print(x)
+    length = int(str(urlopen("https://setgame.lentil1023.repl.co/uplen").read())[2:4])
+    for x in range(length):
         html = urlopen("https://setgame.lentil1023.repl.co/up").read()
         html = str(html)
         html = html[2:6]
-        print(html)
-        realdeck.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
+        upCards.add(Card(int(html[0]), int(html[1]), int(html[2]), int(html[3])))
     return upCards
 
 def valid(in_one, in_two, in_three): # Function to determine whether a set of numbers follows the set game rules (used in isSet())
@@ -228,8 +228,9 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
 
 def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
-  score = 0 
-  upCards.writeToServer()
+  score = 0
+  if name == "agastya" or name == "Agastya":
+    upCards.writeToServer()
   print("A new game has begun!") 
   for x in range(len(players)): # For each player in the "players" list:
     print("Hello, {}!".format(players[x].getName())) # Greet them
@@ -254,7 +255,9 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
           print("Game over!") # End the game
           keepPlaying = False
-      
+     
+      elif status:
+          print("Too late!")
       elif description == "ruheer":
           if setInDeck(upCards):
               print("Yes, there is a set here.")
@@ -269,50 +272,47 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       elif description == "size": # If "size" keyword is entered
           print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
       else:
-          status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
-          if status:
-            desc_one = description[0:2] # Get the first reference from user
-            desc_two = description[3:5] # Get the second reference
-            desc_three = description[6:8] # Get the third reference
-            describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
-            pos = 0 
-            while pos < upCards.size():
-                if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
-                    currentSet.add(upCards.getCard(pos))
-                    pos += 1
-                else:
-                    pos += 1
+          print(status)
+          desc_one = description[0:2] # Get the first reference from user
+          desc_two = description[3:5] # Get the second reference
+          desc_three = description[6:8] # Get the third reference
+          describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
+          pos = 0 
+          while pos < upCards.size():
+              if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
+                  currentSet.add(upCards.getCard(pos))
+                  pos += 1
+              else:
+                  pos += 1
      
         
       
-            if currentSet.isSet():
-                print(currentSet, end=" ")
-                print("This is a set!")
-                tobedeleted = []
-                for ref in describeSet:
-                    tobedeleted.append(converttopos(ref, upCards))
-                if tobedeleted[1] > tobedeleted[0]:
-                   tobedeleted[1] = tobedeleted[1] - 1
-                if tobedeleted[2] > tobedeleted[0]:
-                    if tobedeleted[2] > tobedeleted[1]:
-                        tobedeleted[2] = tobedeleted[2] - 2
-                    else:
-                        tobedeleted[2] = tobedeleted[2] - 1
-                elif tobedeleted[2] > tobedeleted[1]:
-                    tobedeleted[2] = tobedeleted[2] - 1
-                for item in tobedeleted:
-                    upCards.remove(item)
-                if upCards.size() == 9 and deck.size() > 0:
-                    for b in range(3):
-                        upCards.add(deck.deal())
-                score = score + 1
-                urlopen("https://setgame.lentil1023.repl.co/win")
-                upCards.writeToServer()
-            else:
-                print("Sorry, that isn't a set.")
-                score = score - 1
+          if currentSet.isSet():
+              print(currentSet, end=" ")
+              print("This is a set!")
+              tobedeleted = []
+              for ref in describeSet:
+                  tobedeleted.append(converttopos(ref, upCards))
+              if tobedeleted[1] > tobedeleted[0]:
+                 tobedeleted[1] = tobedeleted[1] - 1
+              if tobedeleted[2] > tobedeleted[0]:
+                  if tobedeleted[2] > tobedeleted[1]:
+                      tobedeleted[2] = tobedeleted[2] - 2
+                  else:
+                      tobedeleted[2] = tobedeleted[2] - 1
+              elif tobedeleted[2] > tobedeleted[1]:
+                  tobedeleted[2] = tobedeleted[2] - 1
+              for item in tobedeleted:
+                  upCards.remove(item)
+              if upCards.size() == 9 and deck.size() > 0:
+                  for b in range(3):
+                      upCards.add(deck.deal())
+              score = score + 1
+              urlopen("https://setgame.lentil1023.repl.co/win")
+              upCards.writeToServer()
           else:
-              print("Too late!")
+              print("Sorry, that isn't a set.")
+              score = score - 1
   return False
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
@@ -327,6 +327,7 @@ def playSetGame(deck, players):
         keep_playing = playRealtimeRound(deck, upCards, players)  # repeatedly call playRound until the game is over
    
 def play():
+    global name
     # get player(s) name
     name = input("What is your name? ")
     player = Player(name)
