@@ -9,8 +9,9 @@ Snapshot #3: Actual functionality is achieved! I think it works fully now. *virt
 
 Snapshot #3a: Okay, now it works for real. The positioning bug deleted the wrong cards when a set was found, but I did some tricky debugging and managed to fix it.
 
+Snapshot #4: Another submission to Web-CAT to see if the y/n bug has been fixed.
+
 '''
-import random
 import re
 from card import Card
 from stack_of_cards import StackOfCards
@@ -137,6 +138,9 @@ def playRound(deck, upCards, players): # playRound function, the main function t
           print("Game over!") # End the game
           keepPlaying = False
       
+      elif description == "y":
+          continue
+
       elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
           if setInDeck(upCards):
               print("Yes, there is a set here.")
