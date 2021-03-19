@@ -69,7 +69,10 @@ def buildRealtimeDeck():
 
 def buildUpcards():
     upCards = SetStack()
-    length = int(str(urlopen("https://setgame.lentil1023.repl.co/uplen").read())[2:4])
+    try:
+        length = int(str(urlopen("https://setgame.lentil1023.repl.co/uplen").read())[2:4])
+    except:
+        length = int(str(urlopen("https://setgame.lentil1023.repl.co/uplen").read())[2:3])
     for x in range(length):
         html = urlopen("https://setgame.lentil1023.repl.co/up").read()
         html = str(html)
@@ -237,6 +240,8 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
     print("Hello, {}!".format(players[x].getName())) # Greet them
   keepPlaying = True 
   while keepPlaying: 
+      if name == "agastya" or name == "Agastya":
+        urlopen("https://setgame.lentil1023.repl.co/clear")
       urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
       currentSet = SetStack() # Clear the current set
       upCards = buildUpcards()
