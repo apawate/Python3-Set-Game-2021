@@ -239,10 +239,13 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       currentSet = SetStack() # Clear the current set
       upCards = buildUpcards()
       upCards.displayInRows() # Display the upCards
-      status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
       description = input("What is the set (q to exit, n if you can't find it) ? ")
+      status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
+      urlopen("https://setgame.lentil1023.repl.co/resetstatus")
 
-      if description == "n":
+      if status:
+          print("Too late!")
+      elif description == "n":
           if deck.size() == 0:
               print("No more cards are available.")
           if upCards.size() < 21: # If the deck of cards is less than 21:
@@ -256,8 +259,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
           print("Game over!") # End the game
           keepPlaying = False
      
-      elif status:
-          print("Too late!")
       elif description == "ruheer":
           if setInDeck(upCards):
               print("Yes, there is a set here.")
