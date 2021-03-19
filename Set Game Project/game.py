@@ -249,7 +249,18 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       description = input("What is the set (q to exit, n if you can't find it) ? ")
       status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
       urlopen("https://setgame.lentil1023.repl.co/resetstatus")
+      if description == "leaderboard":
+          for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
+              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: ", str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
 
+
+      elif description == "q": # If the user wants to quit:
+          keepPlaying = False # End the loop
+          score = 0 # Reset the score
+      elif description == "score": # If "score" keyword is entered
+          print("Your score is", score) # Tell the user their score
+      elif description == "size": # If "size" keyword is entered
+          print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
       if status:
           print("Too late!")
       elif description == "n":
@@ -274,7 +285,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       
       elif description == "leaderboard":
           for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
-              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: " str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
+              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: ", str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
 
 
       elif description == "q": # If the user wants to quit:
