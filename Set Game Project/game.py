@@ -231,11 +231,13 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
   score = 0
   if name == "agastya" or name == "Agastya":
     upCards.writeToServer()
+  urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
   print("A new game has begun!") 
   for x in range(len(players)): # For each player in the "players" list:
     print("Hello, {}!".format(players[x].getName())) # Greet them
   keepPlaying = True 
   while keepPlaying: 
+      urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
       currentSet = SetStack() # Clear the current set
       upCards = buildUpcards()
       upCards.displayInRows() # Display the upCards
@@ -264,6 +266,11 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
               print("Yes, there is a set here.")
           else:
               print("No sets were found here.")
+      
+      elif description == "leaderboard":
+          for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
+              print(str(urlopen("https://setgame.lentil1023.repl.co/getname").read()), str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()))
+
 
       elif description == "q": # If the user wants to quit:
           keepPlaying = False # End the loop
