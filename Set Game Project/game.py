@@ -274,7 +274,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       
       elif description == "leaderboard":
           for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
-              print(str(urlopen("https://setgame.lentil1023.repl.co/getname").read()), str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()))
+              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: " str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
 
 
       elif description == "q": # If the user wants to quit:
