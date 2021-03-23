@@ -62,10 +62,6 @@ def setEqual(set1, set2):
     if set1.size() != set2.size():
         return False
     for x in range(set1.size()):
-        print(set1.getCard(x).getValueOf('VALUE'), set2.getCard(x).getValueOf('VALUE'))
-        print(set1.getCard(x).getValueOf('COLOR'), set2.getCard(x).getValueOf('COLOR'))
-        print(set1.getCard(x).getValueOf('COUNT'), set2.getCard(x).getValueOf('COUNT'))
-        print(set1.getCard(x).getValueOf('SHAPE'), set2.getCard(x).getValueOf('SHAPE'))
         if set1.getCard(x).getValueOf('VALUE') == set2.getCard(x).getValueOf('VALUE') and set1.getCard(x).getValueOf('COLOR') == set2.getCard(x).getValueOf('COLOR') and set1.getCard(x).getValueOf('COUNT') == set2.getCard(x).getValueOf('COUNT') and set1.getCard(x).getValueOf('SHAPE') == set2.getCard(x).getValueOf('SHAPE'):
             continue
         else:
@@ -274,8 +270,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
           print("Your score is", score) # Tell the user their score
       elif description == "size": # If "size" keyword is entered
           print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
-      if not setEqual(buildUpcards(), upCards):
-          print("Too late!")
       elif description == "n":
           if deck.size() == 0:
               print("No more cards are available.")
@@ -289,25 +283,13 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
           print("Game over!") # End the game
           keepPlaying = False
-     
+
       elif description == "ruheer":
           if setInDeck(upCards):
-              print("Yes, there is a set here.")
-          else:
               print("No sets were found here.")
-      
-      elif description == "leaderboard":
-          for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
-              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read())[1:], "Score: ", str(urlopen("https://setgame.lentil1023.repl.co/getscore").read())[1:])
 
-
-      elif description == "q": # If the user wants to quit:
-          keepPlaying = False # End the loop
-          score = 0 # Reset the score
-      elif description == "score": # If "score" keyword is entered
-          print("Your score is", score) # Tell the user their score
-      elif description == "size": # If "size" keyword is entered
-          print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
+      elif not setEqual(buildUpcards(), upCards):
+          print("Too late!")
       else:
           desc_one = description[0:2] # Get the first reference from user
           desc_two = description[3:5] # Get the second reference
