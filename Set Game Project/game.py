@@ -58,6 +58,16 @@ for inp_one in range(3):
                for inp_four in range(3):
                    cheatStack.add(Card(inp_one, inp_two, inp_three, inp_four)) # Generate a stack, but don't shuffle it
 
+def setEqual(set1, set2):
+    if set1.size() != set2.size():
+        return False
+    for x in range(set1.size):
+        if set1.getCard(x).getValueOf('VALUE') == set2.getCard(x).getValueOf('VALUE') and set1.getCard(x).getValueOf('COLOR') == set2.getCard(x).getValueOf('COLOR') and set1.getCard(x).getValueOf('COUNT') == set2.getCard(x).getValueOf('COUNT') and set1.getCard(x).getValueOf('SHAPE') == set2.getCard(x).getValueOf('SHAPE'):
+            continue
+        else:
+            return False
+
+
 def buildRealtimeDeck():
     realdeck = SetStack()
     for x in range(81):
@@ -261,7 +271,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
           print("Your score is", score) # Tell the user their score
       elif description == "size": # If "size" keyword is entered
           print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
-      if status:
+      if not setEqual(buildUpCards, upCards):
           print("Too late!")
       elif description == "n":
           if deck.size() == 0:
