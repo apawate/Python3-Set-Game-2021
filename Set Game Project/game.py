@@ -309,7 +309,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       elif description == "size": # If "size" keyword is entered
           print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
       else:
-          print(status)
           desc_one = description[0:2] # Get the first reference from user
           desc_two = description[3:5] # Get the second reference
           desc_three = description[6:8] # Get the third reference
