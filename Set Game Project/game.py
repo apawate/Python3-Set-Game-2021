@@ -262,8 +262,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       upCards = buildUpcards()
       upCards.displayInRows() # Display the upCards
       description = input("What is the set (q to exit, n if you can't find it) ? ")
-      status = int(str(urlopen("https://setgame.lentil1023.repl.co/status").read())[2:3])
-      urlopen("https://setgame.lentil1023.repl.co/resetstatus")
       if description == "leaderboard":
           for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
               print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: ", str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
@@ -347,7 +345,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
                   for b in range(3):
                       upCards.add(deck.deal())
               score = score + 1
-              urlopen("https://setgame.lentil1023.repl.co/win")
               upCards.writeToServer()
           else:
               print("Sorry, that isn't a set.")
