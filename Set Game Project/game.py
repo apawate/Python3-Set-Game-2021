@@ -31,15 +31,18 @@ class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
             return False
     def displayInRows(self): # Display in rows, which Advaita wrote and Agastya modified slightly to allow for multiple deck sizes
         titles = ['A', 'B', 'C'] # Row titles
-        whereiscard = 0 
+        whereiscard = 0  
         for x in range(1, self.size()//3 + 1): # Agastya added the self.size()//3 + 1 to allow for different deck sizes, this loop prints the column titles 
             print("   ", x, end='    ')
         print() # Newline
         for i in range(3):
             print(titles[i], end=' ') # Print row titles (A, B, C)
             for y in range(self.size()//3): 
+                if whereiscard >= ((self.size()//3)) * 3:
+                  whereiscard = whereiscard - (((self.size()//3)) * 3) + 1
                 print(self.getCard(whereiscard), end='    ') 
-                whereiscard += 1 # Cycle through the deck, adding a card at each position in the grid
+                print(whereiscard)
+                whereiscard += 3 # Cycle through the deck, adding a card at each position in the grid
             print() # Newline
 
 
