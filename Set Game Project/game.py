@@ -206,7 +206,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
             for b in range(3):
                 upCards.add(deck.deal())
-        players[0].addScore()
+        players[0].addScore(1)
     else: # If it isn't a set
         print("Sorry, that isn't a set.")
         players[0].score = players[0].score - 1 # remove one point from the score
