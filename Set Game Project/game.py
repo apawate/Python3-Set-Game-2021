@@ -23,8 +23,11 @@ from card import Card
 from stack_of_cards import StackOfCards
 from player import Player   # Import all the necessary libraries
 from urllib.request import urlopen
+import os
+
 
 name = ""
+gametype = ""
 
 score = 0
 
@@ -258,9 +261,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
   if name == "agastya" or name == "Agastya":
     upCards.writeToServer()
   urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
-  print("A new game has begun!") 
-  for x in range(len(players)): # For each player in the "players" list:
-    print("Hello, {}!".format(players[x].getName())) # Greet them
   keepPlaying = True 
   while keepPlaying: 
       if name == "agastya" or name == "Agastya":
@@ -350,6 +350,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
 def playSetGame(deck, players): 
     global score
     global cheat
+    global gametype
     upCards = SetStack()
     score = 0 
     print("A new game has begun!") 
@@ -359,16 +360,20 @@ def playSetGame(deck, players):
     for i in range(12):
         upCards.add(deck.deal()) # deal 12 cards from the deck
     while keep_playing:
-        if cheat:
-          deck = cheatStack
-          upCards = SetStack()
-          for x in range(12):
-              upCards.add(deck.deal())
-          cheat = False
-        keep_playing = playRealtimeRound(deck, upCards, players)  # repeatedly call playRound until the game is over
+        if gametype == "n":
+            if cheat:
+                deck = cheatStack
+                upCards = SetStack()
+                for x in range(12):
+                    upCards.add(deck.deal())
+                cheat = False
+            keep_playing = playRound(deck, upCards, players)  # repeatedly call playRound until the game is over
+        else:
+            keep_playing = playRealtimeRound(deck, upCards, players)
    
 def play():
     global name
+    global gametype
     # get player(s) name
     name = input("What is your name? ")
     player = Player(name)
@@ -384,6 +389,7 @@ def play():
                         cards.add(Card(inp_one, inp_two, inp_three, inp_four))
         cards.shuffle()
     else:
+        os.system("python3 write.py")
         cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
