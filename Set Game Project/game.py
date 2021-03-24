@@ -17,6 +17,10 @@ Snapshot #6: Fixed the "n" bug so that it appends 3 cards again. (Indentation go
 
 Snapshot #7: Fixed the bug that didn't allow the "asdf" command to execute properly. (I moved the routine to playSetGame.)
 
+Snapshot #8: Hopefully this is the final death blow to the bugs that have plagued my Web-CAT submissions.
+
+Snapshot #9: Okay, this one should really be the final blow. I changed the score variable from an int to an attribute of the player.
+
 '''
 import re
 from card import Card
@@ -34,7 +38,6 @@ except:
 name = ""
 gametype = ""
 
-score = 0
 
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
     def isSet(self): # Is the stack a set?
@@ -178,12 +181,12 @@ cheat = False
 def playRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
   global cheat
   #keepPlaying = True 
-  global score
   #while keepPlaying: 
   currentSet = SetStack() # Clear the current set
   upCards.displayInRows() # Display the upCards
   description = input("What is the set (q to exit, n if you can't find it) ? ")
-    
+  if description == "y":
+    description = input("What is the set?")
   if description == "n":
     if deck.size() == 0:
         print("No more cards are available.")
@@ -192,14 +195,11 @@ def playRound(deck, upCards, players): # playRound function, the main function t
             upCards.add(deck.deal()) # Deal three more
     else:
         print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-        score -= 1 # Lower the score by 1 every time the user types "n"
+        players[0].addScore(-1) # Lower the score by 1 every time the user types "n"
 
   elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
       print("Game over!") # End the game
       return False
-    
-  elif description == "y":
-      return True
 
   elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
       if setInDeck(upCards):
@@ -209,9 +209,9 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
   elif description == "q": # If the user wants to quit:
       return False # End the loop
-      score = 0 # Reset the score
+      players[0].score = 0 # Reset the score
   elif description == "score": # If "score" keyword is entered
-      print("Your score is", score) # Tell the user their score
+      print("Your score is", players[0].score) # Tell the user their score
   elif description == "size": # If "size" keyword is entered
       print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
   elif description == "asdf": # Cheat code :P
@@ -256,10 +256,10 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
             for b in range(3):
                 upCards.add(deck.deal())
-        score = score + 1
+        players[0].addScore(1)
     else: # If it isn't a set
         print("Sorry, that isn't a set.")
-        score = score - 1 # remove one point from the score
+        players[0].addScore(-1) # remove one point from the score
   return True
 
 
@@ -355,11 +355,10 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
 #   players - list of Player
 # No return value
 def playSetGame(deck, players): 
-    global score
     global cheat
     global gametype
     upCards = SetStack()
-    score = 0 
+    players[0].score = 0 
     print("A new game has begun!") 
     for x in range(len(players)): # For each player in the "players" list:
       print("Hello, {}!".format(players[x].getName())) # Greet them
