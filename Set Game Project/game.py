@@ -88,7 +88,7 @@ def converttopos(ref, stack): # Does the opposite of the above function, convert
         add = 1
     if ref[0] == "c":
         add = 2
-    pos = (3 * (int(ref[1]))) + add
+    pos = (3 * (int(ref[1]) - 1)) + add
     return pos
 
 # def setInDeck(deck):
@@ -135,11 +135,11 @@ def playRound(deck, upCards, players): # playRound function, the main function t
   if description == "n":
     if deck.size() == 0:
         print("No more cards are available.")
-        if upCards.size() < 21: # If the deck of cards is less than 21:
-            for x in range(3):
-                upCards.add(deck.deal()) # Deal three more
-        else:
-            print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
+    if upCards.size() < 21: # If the deck of cards is less than 21:
+        for x in range(3):
+            upCards.add(deck.deal()) # Deal three more
+    else:
+        print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
         score -= 1 # Lower the score by 1 every time the user types "n"
 
   elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
@@ -186,8 +186,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
     
     
     if currentSet.isSet(): # If the set is a set
-        print(currentSet, end=" ")
-        print("This is a set!")
+        print(currentSet, "This is a set!")
         tobedeleted = [] # Cards to be removed (part of the super-tricky debugging by Agastya)
         for ref in describeSet: # For every reference in describeSet
             tobedeleted.append(converttopos(ref, upCards)) # Append the numerical pos to the tobedeleted list
@@ -201,13 +200,11 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         elif tobedeleted[2] > tobedeleted[1]:
             tobedeleted[2] = tobedeleted[2] - 1
         for item in tobedeleted: # tobedeleted is correct, now all those cards can be removed
-            print(item)
             upCards.remove(item)
         if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
             for b in range(3):
                 upCards.add(deck.deal())
         score = score + 1
-        upCards.displayInRows()
     else: # If it isn't a set
         print("Sorry, that isn't a set.")
         score = score - 1 # remove one point from the score
@@ -219,6 +216,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 # No return value
 def playSetGame(deck, players): 
     global score
+    global cheat
     upCards = SetStack()
     score = 0 
     print("A new game has begun!") 
@@ -228,6 +226,8 @@ def playSetGame(deck, players):
     for i in range(12):
         upCards.add(deck.deal()) # deal 12 cards from the deck
     while keep_playing:
+        if cheat:
+          deck = cheatStack
         keep_playing = playRound(deck, upCards, players)  # repeatedly call playRound until the game is over
    
 def play():
