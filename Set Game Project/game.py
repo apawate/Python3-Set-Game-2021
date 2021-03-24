@@ -15,6 +15,8 @@ Snapshot #5: Fixed displayInRows and removed the playRound loop to make the code
 
 Snapshot #6: Fixed the "n" bug so that it appends 3 cards again. (Indentation got messed up when removing the while loop.)
 
+Snapshot #7: Fixed the bug that didn't allow the "asdf" command to execute properly. (I moved the routine to playSetGame.)
+
 '''
 import re
 from card import Card
@@ -127,12 +129,6 @@ def playRound(deck, upCards, players): # playRound function, the main function t
   global score
   #while keepPlaying: 
   currentSet = SetStack() # Clear the current set
-  if  cheat: # If the cheat code has been entered
-    deck = cheatStack # Set the deck to the cheatStack instead of the normal shuffled deck
-    upCards = SetStack() # Reset upCards
-    for m in range(12):
-      upCards.add(deck.deal()) # Deal out the upCards from the new cheat deck
-    cheat = False
   upCards.displayInRows() # Display the upCards
   description = input("What is the set (q to exit, n if you can't find it) ? ")
     
@@ -232,6 +228,10 @@ def playSetGame(deck, players):
     while keep_playing:
         if cheat:
           deck = cheatStack
+          upCards = SetStack()
+          for x in range(12):
+              upCards.add(deck.deal())
+          cheat = False
         keep_playing = playRound(deck, upCards, players)  # repeatedly call playRound until the game is over
    
 def play():
