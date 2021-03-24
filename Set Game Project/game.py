@@ -27,7 +27,6 @@ from card import Card
 from stack_of_cards import StackOfCards
 from player import Player   # Import all the necessary libraries
 
-score = 0
 
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
     def isSet(self): # Is the stack a set?
@@ -130,7 +129,6 @@ cheat = False
 def playRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
   global cheat
   #keepPlaying = True 
-  global score
   #while keepPlaying: 
   currentSet = SetStack() # Clear the current set
   upCards.displayInRows() # Display the upCards
@@ -145,7 +143,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
             upCards.add(deck.deal()) # Deal three more
     else:
         print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-        players[0].score = players[0].score - 1 # Lower the score by 1 every time the user types "n"
+        players[0].addScore(-1) # Lower the score by 1 every time the user types "n"
 
   elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
       print("Game over!") # End the game
@@ -209,7 +207,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         players[0].addScore(1)
     else: # If it isn't a set
         print("Sorry, that isn't a set.")
-        players[0].score = players[0].score - 1 # remove one point from the score
+        players[0].addScore(-1) # remove one point from the score
   return True
 
 # Input:
@@ -217,7 +215,6 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 #   players - list of Player
 # No return value
 def playSetGame(deck, players): 
-    global score
     global cheat
     upCards = SetStack()
     players[0].score = 0 
