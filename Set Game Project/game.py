@@ -19,6 +19,8 @@ Snapshot #7: Fixed the bug that didn't allow the "asdf" command to execute prope
 
 Snapshot #8: Hopefully this is the final death blow to the bugs that have plagued my Web-CAT submissions.
 
+Snapshot #9: Okay, this one should really be the final blow. I changed the score variable from an int to an attribute of the player.
+
 '''
 import re
 from card import Card
@@ -143,7 +145,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
             upCards.add(deck.deal()) # Deal three more
     else:
         print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-        score -= 1 # Lower the score by 1 every time the user types "n"
+        players[0].score = players[0].score - 1 # Lower the score by 1 every time the user types "n"
 
   elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
       print("Game over!") # End the game
@@ -157,9 +159,9 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
   elif description == "q": # If the user wants to quit:
       return False # End the loop
-      score = 0 # Reset the score
+      players[0].score = 0 # Reset the score
   elif description == "score": # If "score" keyword is entered
-      print("Your score is", score) # Tell the user their score
+      print("Your score is", players[0].score) # Tell the user their score
   elif description == "size": # If "size" keyword is entered
       print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
   elif description == "asdf": # Cheat code :P
@@ -204,10 +206,10 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
             for b in range(3):
                 upCards.add(deck.deal())
-        score = score + 1
+        players[0].addScore()
     else: # If it isn't a set
         print("Sorry, that isn't a set.")
-        score = score - 1 # remove one point from the score
+        players[0].score = players[0].score - 1 # remove one point from the score
   return True
 
 # Input:
@@ -218,7 +220,7 @@ def playSetGame(deck, players):
     global score
     global cheat
     upCards = SetStack()
-    score = 0 
+    players[0].score = 0 
     print("A new game has begun!") 
     for x in range(len(players)): # For each player in the "players" list:
       print("Hello, {}!".format(players[x].getName())) # Greet them
