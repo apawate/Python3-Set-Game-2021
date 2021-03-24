@@ -17,6 +17,8 @@ Snapshot #6: Fixed the "n" bug so that it appends 3 cards again. (Indentation go
 
 Snapshot #7: Fixed the bug that didn't allow the "asdf" command to execute properly. (I moved the routine to playSetGame.)
 
+Snapshot #8: Hopefully this is the final death blow to the bugs that have plagued my Web-CAT submissions.
+
 '''
 import re
 from card import Card
@@ -131,7 +133,8 @@ def playRound(deck, upCards, players): # playRound function, the main function t
   currentSet = SetStack() # Clear the current set
   upCards.displayInRows() # Display the upCards
   description = input("What is the set (q to exit, n if you can't find it) ? ")
-    
+  if description == "y":
+    description = input("What is the set?")
   if description == "n":
     if deck.size() == 0:
         print("No more cards are available.")
@@ -145,9 +148,6 @@ def playRound(deck, upCards, players): # playRound function, the main function t
   elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
       print("Game over!") # End the game
       return False
-    
-  elif description == "y":
-      return True
 
   elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
       if setInDeck(upCards):
