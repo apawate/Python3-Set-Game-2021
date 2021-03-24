@@ -11,6 +11,10 @@ Snapshot #3a: Okay, now it works for real. The positioning bug deleted the wrong
 
 Snapshot #4: Another submission to Web-CAT to see if the y/n bug has been fixed.
 
+Snapshot #5: Fixed displayInRows and removed the playRound loop to make the code Web-CAT friendly.
+
+Snapshot #6: Fixed the "n" bug so that it appends 3 cards again. (Indentation got messed up when removing the while loop.)
+
 '''
 import re
 from card import Card
