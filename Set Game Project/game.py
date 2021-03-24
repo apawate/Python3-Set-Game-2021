@@ -25,6 +25,11 @@ from player import Player   # Import all the necessary libraries
 from urllib.request import urlopen
 import os
 
+try:
+    from tqdm import tqdm
+except:
+    os.system("pip3 install tqdm")
+    from tqdm import tqdm
 
 name = ""
 gametype = ""
@@ -62,7 +67,8 @@ class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
     def writeToServer(self):
         url = "https://setgame.lentil1023.repl.co"
         urlopen("https://setgame.lentil1023.repl.co/reset")
-        for x in range(self.size()):
+        print("Writing to server: ")
+        for x in tqdm(range(self.size())):
             html = urlopen(url + "/setup?card=" + str(self.getCard(x).getValueOf('VALUE')) + str(self.getCard(x).getValueOf('COLOR')) + str(self.getCard(x).getValueOf('COUNT')) + str(self.getCard(x).getValueOf('SHAPE'))).read()
 
 
@@ -86,7 +92,8 @@ def setEqual(set1, set2):
 
 def buildRealtimeDeck():
     realdeck = SetStack()
-    for x in range(81):
+    print("Getting cards from the deck...")
+    for x in tqdm(range(81)):
         html = urlopen("https://setgame.lentil1023.repl.co/deck").read()
         html = str(html)
         html = html[2:6]
@@ -389,7 +396,8 @@ def play():
                         cards.add(Card(inp_one, inp_two, inp_three, inp_four))
         cards.shuffle()
     else:
-        os.system("python3 write.py")
+        if name == "Agastya" or name == "agastya":
+            os.system("python3 write.py")
         cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
