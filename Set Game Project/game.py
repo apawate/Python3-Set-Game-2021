@@ -287,6 +287,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
           if upCards.size() < 21: # If the deck of cards is less than 21:
               for x in range(3):
                   upCards.add(deck.deal()) # Deal three more
+              upCards.writeToServer()
           else:
               print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
           score -= 1 # Lower the score by 1 every time the user types "n"
@@ -297,6 +298,8 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
 
       elif description == "ruheer":
           if setInDeck(upCards):
+              print("Yes, there is a set here.")
+          else:
               print("No sets were found here.")
 
       elif not setEqual(buildUpcards(), upCards):
