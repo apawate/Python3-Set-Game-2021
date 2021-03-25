@@ -24,6 +24,7 @@ from stack_of_cards import StackOfCards
 from player import Player   # Import all the necessary libraries
 from urllib.request import urlopen
 import os
+import time
 
 try:
     from tqdm import tqdm
@@ -398,6 +399,9 @@ def play():
     else:
         if name == "Agastya" or name == "agastya":
             os.system("python3 write.py")
+        else:
+            print("Waiting for deck to be built...")
+            time.sleep(20)
         cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
