@@ -1,26 +1,15 @@
 '''
 Names: Agastya Pawate and Advaita Guruprasad 
-
 Snapshot #1: Finished everything except playRound(), which is still pending and will hopefully be done by Friday...
-
 Snapshot #2: Finished playRound() and achieved very basic functionality. The next step will be to get the scoring and rounds/games system in, which will require a lot of loops and stuff.
-
 Snapshot #3: Actual functionality is achieved! I think it works fully now. *virtual high five to Advaita*
-
 Snapshot #3a: Okay, now it works for real. The positioning bug deleted the wrong cards when a set was found, but I did some tricky debugging and managed to fix it.
-
 Snapshot #4: Another submission to Web-CAT to see if the y/n bug has been fixed.
-
 Snapshot #5: Fixed displayInRows and removed the playRound loop to make the code Web-CAT friendly.
-
 Snapshot #6: Fixed the "n" bug so that it appends 3 cards again. (Indentation got messed up when removing the while loop.)
-
 Snapshot #7: Fixed the bug that didn't allow the "asdf" command to execute properly. (I moved the routine to playSetGame.)
-
 Snapshot #8: Hopefully this is the final death blow to the bugs that have plagued my Web-CAT submissions.
-
 Snapshot #9: Okay, this one should really be the final blow. I changed the score variable from an int to an attribute of the player.
-
 '''
 import re
 from card import Card
@@ -28,6 +17,7 @@ from stack_of_cards import StackOfCards
 from player import Player   # Import all the necessary libraries
 from urllib.request import urlopen
 import os
+import time
 
 try:
     from tqdm import tqdm
@@ -37,6 +27,7 @@ except:
 
 name = ""
 gametype = ""
+
 
 
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
@@ -124,6 +115,12 @@ def valid(in_one, in_two, in_three): # Function to determine whether a set of nu
     else:
         return False
 
+def cardEqual(card1, card2):
+    if card1.getValueOf('VALUE') == card2.getValueOf('VALUE') and card1.getValueOf('COLOR') == card2.getValueOf('COLOR') and card1.getValueOf('COUNT') == card2.getValueOf('COUNT') and card1.getValueOf('SHAPE') == card2.getValueOf('SHAPE'):
+        return True
+    else:
+        return False
+
 # new position logic
 #    1    2    3    4
 # A  0    3    6    9
@@ -151,6 +148,7 @@ def converttopos(ref, stack): # Does the opposite of the above function, convert
         add = 2
     pos = (3 * (int(ref[1]) - 1)) + add
     return pos
+
 
 # def setInDeck(deck):
   #   check all the possible combinations of 3 cards in this deck until a set is found
@@ -265,6 +263,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
 def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
   score = 0
+  leaders = []
   if name == "agastya" or name == "Agastya":
     upCards.writeToServer()
   urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
@@ -275,14 +274,23 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
       currentSet = SetStack() # Clear the current set
       upCards = buildUpcards()
+      sub = 0
+      print("Removing conflicts between decks...")
+      for pos in tqdm(range(upCards.size())):
+          for deckpos in tqdm(range(deck.size())):
+              if cardEqual(upCards.getCard(pos), deck.getCard(deckpos-sub)):
+                  deck.remove(deckpos-sub)
+                  sub = sub + 1
       upCards.displayInRows() # Display the upCards
       description = input("What is the set (q to exit, n if you can't find it) ? ")
-      if description == "leaderboard":
-          for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
-              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: ", str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
+      #if description == "leaderboard":
+       #   for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
+        #      leaders.append(str(urlopen("https://setgame.lentil1023.repl.co/getld").read())[1:])
+         #     for leader in leaders:
+          #        print(leader)
 
 
-      elif description == "q": # If the user wants to quit:
+      if description == "q": # If the user wants to quit:
           keepPlaying = False # End the loop
           score = 0 # Reset the score
       elif description == "score": # If "score" keyword is entered
@@ -295,6 +303,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
           if upCards.size() < 21: # If the deck of cards is less than 21:
               for x in range(3):
                   upCards.add(deck.deal()) # Deal three more
+              upCards.writeToServer()
           else:
               print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
           score -= 1 # Lower the score by 1 every time the user types "n"
@@ -305,6 +314,8 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
 
       elif description == "ruheer":
           if setInDeck(upCards):
+              print("Yes, there is a set here.")
+          else:
               print("No sets were found here.")
 
       elif not setEqual(buildUpcards(), upCards):
@@ -340,6 +351,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
               elif tobedeleted[2] > tobedeleted[1]:
                   tobedeleted[2] = tobedeleted[2] - 1
               for item in tobedeleted:
+                  print(upCards.getCard(item))
                   upCards.remove(item)
               if upCards.size() == 9 and deck.size() > 0:
                   for b in range(3):
@@ -358,6 +370,7 @@ def playSetGame(deck, players):
     global cheat
     global gametype
     upCards = SetStack()
+    score = 0 
     players[0].score = 0 
     print("A new game has begun!") 
     for x in range(len(players)): # For each player in the "players" list:
@@ -397,6 +410,9 @@ def play():
     else:
         if name == "Agastya" or name == "agastya":
             os.system("python3 write.py")
+        else:
+            print("Waiting for deck to be built...")
+            time.sleep(20)
         cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
