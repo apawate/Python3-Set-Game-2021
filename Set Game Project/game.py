@@ -28,7 +28,6 @@ except:
 name = ""
 gametype = ""
 
-score = 0
 
 
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
@@ -208,7 +207,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
   elif description == "q": # If the user wants to quit:
       return False # End the loop
-      score = 0 # Reset the score
+      players[0].score = 0 # Reset the score
   elif description == "score": # If "score" keyword is entered
       print("Your score is", players[0].score) # Tell the user their score
   elif description == "size": # If "size" keyword is entered
@@ -369,7 +368,6 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
 #   players - list of Player
 # No return value
 def playSetGame(deck, players): 
-    global score
     global cheat
     global gametype
     upCards = SetStack()
