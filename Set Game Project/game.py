@@ -210,7 +210,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
       return False # End the loop
       score = 0 # Reset the score
   elif description == "score": # If "score" keyword is entered
-      print("Your score is", score) # Tell the user their score
+      print("Your score is", players[0].score) # Tell the user their score
   elif description == "size": # If "size" keyword is entered
       print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
   elif description == "asdf": # Cheat code :P
@@ -255,14 +255,15 @@ def playRound(deck, upCards, players): # playRound function, the main function t
         if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
             for b in range(3):
                 upCards.add(deck.deal())
-        score = score + 1
+        players[0].addScore(1)
     else: # If it isn't a set
         print("Sorry, that isn't a set.")
-        score = score - 1 # remove one point from the score
+        players[0].addScore(-1) # remove one point from the score
   return True
 
 
 def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
+  global score
   score = 0
   leaders = []
   if name == "agastya" or name == "Agastya":
