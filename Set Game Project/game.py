@@ -275,6 +275,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
       currentSet = SetStack() # Clear the current set
       upCards = buildUpcards()
+      compareCards = upCards
       sub = 0
       print("Removing conflicts between decks...")
       for pos in tqdm(range(upCards.size())):
@@ -319,7 +320,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
           else:
               print("No sets were found here.")
 
-      elif not setEqual(buildUpcards(), upCards):
+      elif not setEqual(buildUpcards(), compareCards):
           print("Too late!")
       else:
           desc_one = description[0:2] # Get the first reference from user
