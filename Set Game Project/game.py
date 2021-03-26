@@ -144,6 +144,7 @@ def converttopos(ref, stack): # Does the opposite of the above function, convert
     pos = (3 * (int(ref[1]) - 1)) + add
     return pos
 
+
 # def setInDeck(deck):
   #   check all the possible combinations of 3 cards in this deck until a set is found
 def setInDeck(deck):
@@ -257,6 +258,7 @@ def playRound(deck, upCards, players): # playRound function, the main function t
 
 def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
   score = 0
+  leaders = []
   if name == "agastya" or name == "Agastya":
     upCards.writeToServer()
   urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
@@ -269,12 +271,14 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       upCards = buildUpcards()
       upCards.displayInRows() # Display the upCards
       description = input("What is the set (q to exit, n if you can't find it) ? ")
-      if description == "leaderboard":
-          for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
-              print("Name: ", str(urlopen("https://setgame.lentil1023.repl.co/getname").read()[1:]), "Score: ", str(urlopen("https://setgame.lentil1023.repl.co/getscore").read()[1:]))
+      #if description == "leaderboard":
+       #   for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
+        #      leaders.append(str(urlopen("https://setgame.lentil1023.repl.co/getld").read())[1:])
+         #     for leader in leaders:
+          #        print(leader)
 
 
-      elif description == "q": # If the user wants to quit:
+      if description == "q": # If the user wants to quit:
           keepPlaying = False # End the loop
           score = 0 # Reset the score
       elif description == "score": # If "score" keyword is entered
