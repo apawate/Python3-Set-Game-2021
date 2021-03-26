@@ -116,6 +116,12 @@ def valid(in_one, in_two, in_three): # Function to determine whether a set of nu
     else:
         return False
 
+def cardEqual(card1, card2):
+    if card1.getValueOf('VALUE') == card2.getValueOf('VALUE') and card1.getValueOf('COLOR') == card2.getValueOf('COLOR') and card1.getValueOf('COUNT') == card2.getValueOf('COUNT') and card1.getValueOf('SHAPE') == card2.getValueOf('SHAPE'):
+        return True
+    else:
+        return False
+
 # new position logic
 #    1    2    3    4
 # A  0    3    6    9
@@ -269,6 +275,13 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
       urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
       currentSet = SetStack() # Clear the current set
       upCards = buildUpcards()
+      sub = 0
+      print("Removing conflicts between decks...")
+      for pos in tqdm(range(upCards.size())):
+          for deckpos in tqdm(range(deck.size())):
+              if cardEqual(upCards.getCard(pos), deck.getCard(deckpos-sub)):
+                  deck.remove(deckpos-sub)
+                  sub = sub + 1
       upCards.displayInRows() # Display the upCards
       description = input("What is the set (q to exit, n if you can't find it) ? ")
       #if description == "leaderboard":
@@ -339,6 +352,7 @@ def playRealtimeRound(deck, upCards, players): # playRound function, the main fu
               elif tobedeleted[2] > tobedeleted[1]:
                   tobedeleted[2] = tobedeleted[2] - 1
               for item in tobedeleted:
+                  print(upCards.getCard(item))
                   upCards.remove(item)
               if upCards.size() == 9 and deck.size() > 0:
                   for b in range(3):
