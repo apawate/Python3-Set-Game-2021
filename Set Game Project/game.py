@@ -116,6 +116,25 @@ def cardEqual(card1, card2):
     else:
         return False
 
+def animate():
+    msg = "Game over! "
+    for x in range(len(msg)):
+        os.system("clear")
+        print(msg[0:x])
+        time.sleep(0.25)
+    for x in range(3):
+        os.system("clear")
+        print("/ / /")
+        time.sleep(0.25)
+        os.system("clear")
+        print("- - -")
+        time.sleep(0.25)
+        os.system("clear")
+        print("\ \ \ ")
+        time.sleep(0.25)
+    os.system("clear")
+    print("* * * You won!")
+
 # new position logic
 #    1    2    3    4
 # A  0    3    6    9
@@ -184,15 +203,17 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
     if description == "n":
       if deck.size() == 0:
           print("No more cards are available.")
-      if upCards.size() < 21: # If the deck of cards is less than 21:
+      if upCards.size() < 21 and deck.size() > 0: # If the deck of cards is less than 21:
           for x in range(3):
               upCards.add(deck.deal()) # Deal three more
       else:
           print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-          players[0].addScore(-1) # Lower the score by 1 every time the user types "n"
+      players[0].score = players[0].score - 1 # Lower the score by 1 every time the user types "n"
 
     elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
         print("Game over!") # End the game
+        print(players[0])
+        animate()
         return False
 
     elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
@@ -253,7 +274,7 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
           players[0].addScore(1)
       else: # If it isn't a set
           print("Sorry, that isn't a set.")
-          players[0].addScore(-1) # remove one point from the score
+          players[0].score = players[0].score - 1 # remove one point from the score
     return True
   
   else:
@@ -297,7 +318,7 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
         elif description == "n":
             if deck.size() == 0:
                 print("No more cards are available.")
-            if upCards.size() < 21: # If the deck of cards is less than 21:
+            if upCards.size() < 21 and deck.size() > 0: # If the deck of cards is less than 21:
                 for x in range(3):
                     upCards.add(deck.deal()) # Deal three more
                 upCards.writeToServer()
