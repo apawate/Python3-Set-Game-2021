@@ -10,6 +10,7 @@ Snapshot #6: Fixed the "n" bug so that it appends 3 cards again. (Indentation go
 Snapshot #7: Fixed the bug that didn't allow the "asdf" command to execute properly. (I moved the routine to playSetGame.)
 Snapshot #8: Hopefully this is the final death blow to the bugs that have plagued my Web-CAT submissions.
 Snapshot #9: Okay, this one should really be the final blow. I changed the score variable from an int to an attribute of the player.
+Snapshot #10: The code is completed! (But the nightmare bug lives on in realtime...)
 '''
 import re
 from card import Card
@@ -18,12 +19,6 @@ from player import Player   # Import all the necessary libraries
 from urllib.request import urlopen
 import os
 import time
-
-try:
-    from tqdm import tqdm
-except:
-    os.system("pip3 install tqdm")
-    from tqdm import tqdm
 
 name = ""
 gametype = ""
@@ -176,192 +171,194 @@ def setInDeck(deck):
         # I have some feature improvement ideas I'll communicate over hangouts later on, that's when we'll really need to work hard again        
 
 cheat = False
-def playRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
-  global cheat
-  #keepPlaying = True 
-  #while keepPlaying: 
-  currentSet = SetStack() # Clear the current set
-  upCards.displayInRows() # Display the upCards
-  description = input("What is the set (q to exit, n if you can't find it) ? ")
-  if description == "y":
-    description = input("What is the set?")
-  if description == "n":
-    if deck.size() == 0:
-        print("No more cards are available.")
-    if upCards.size() < 21: # If the deck of cards is less than 21:
-        for x in range(3):
-            upCards.add(deck.deal()) # Deal three more
-    else:
-        print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-        players[0].addScore(-1) # Lower the score by 1 every time the user types "n"
-
-  elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
-      print("Game over!") # End the game
-      return False
-
-  elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
-      if setInDeck(upCards):
-          print("Yes, there is a set here.")
+def playRound(deck, upCards, players, realtime=False): # playRound function, the main function that does everything needed for a set game
+  if not realtime:
+    global cheat
+    #keepPlaying = True 
+    #while keepPlaying: 
+    currentSet = SetStack() # Clear the current set
+    upCards.displayInRows() # Display the upCards
+    description = input("What is the set (q to exit, n if you can't find it) ? ")
+    if description == "y":
+      description = input("What is the set?")
+    if description == "n":
+      if deck.size() == 0:
+          print("No more cards are available.")
+      if upCards.size() < 21: # If the deck of cards is less than 21:
+          for x in range(3):
+              upCards.add(deck.deal()) # Deal three more
       else:
-          print("No sets were found here.")
+          print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
+          players[0].addScore(-1) # Lower the score by 1 every time the user types "n"
 
-  elif description == "q": # If the user wants to quit:
-      return False # End the loop
-      players[0].score = 0 # Reset the score
-  elif description == "score": # If "score" keyword is entered
-      print("Your score is", players[0].score) # Tell the user their score
-  elif description == "size": # If "size" keyword is entered
-      print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
-  elif description == "asdf": # Cheat code :P
-      print("Congratulations.")
-      print("Cheat mode has been enabled!")
-      cheat = True # Set cheat to True, run above routine
-  elif description == "aaa": # Another cheat-ish keyword
-      for x in range(upCards.size()):
-          upCards.remove(0) # Clear the upCards, allows developers to get to the endgame faster
-  else:
-    if len(description) != 8:
-      description = input("Type your set again please: ")
-    desc_one = description[0:2] # Get the first reference from user
-    desc_two = description[3:5] # Get the second reference
-    desc_three = description[6:8] # Get the third reference
-    describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
-    pos = 0 
-    while pos < upCards.size(): # Made by Advaita, finds the card referenced by each position given by the user
-        if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
-            currentSet.add(upCards.getCard(pos))
-            pos += 1
+    elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
+        print("Game over!") # End the game
+        return False
+
+    elif description == "ruheer": # Sees if a set is here, also prints the set if it is there
+        if setInDeck(upCards):
+            print("Yes, there is a set here.")
         else:
-            pos += 1
-    
-    
-    if currentSet.isSet(): # If the set is a set
-        print(currentSet, "This is a set!")
-        tobedeleted = [] # Cards to be removed (part of the super-tricky debugging by Agastya)
-        for ref in describeSet: # For every reference in describeSet
-            tobedeleted.append(converttopos(ref, upCards)) # Append the numerical pos to the tobedeleted list
-        if tobedeleted[1] > tobedeleted[0]: # This is COMPLICATED: basically the computer runs through this set and deletes each card as it gets to it. Think of it as a tower of coins. The computer finds the coin it wants to remove based on the coin's position in the tower, and deletes that coin. But that makes all the coins above the deleted one come down one level, which changes their position by 1. That's what Agastya tries to mitigate here.
-            tobedeleted[1] = tobedeleted[1] - 1
-        if tobedeleted[2] > tobedeleted[0]:
-            if tobedeleted[2] > tobedeleted[1]:
-                tobedeleted[2] = tobedeleted[2] - 2
-            else:
-                tobedeleted[2] = tobedeleted[2] - 1
-        elif tobedeleted[2] > tobedeleted[1]:
-            tobedeleted[2] = tobedeleted[2] - 1
-        for item in tobedeleted: # tobedeleted is correct, now all those cards can be removed
-            upCards.remove(item)
-        if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
-            for b in range(3):
-                upCards.add(deck.deal())
-        players[0].addScore(1)
-    else: # If it isn't a set
-        print("Sorry, that isn't a set.")
-        players[0].addScore(-1) # remove one point from the score
-  return True
+            print("No sets were found here.")
 
-
-def playRealtimeRound(deck, upCards, players): # playRound function, the main function that does everything needed for a set game
-  score = 0
-  leaders = []
-  if name == "agastya" or name == "Agastya":
-    upCards.writeToServer()
-  urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
-  keepPlaying = True 
-  while keepPlaying: 
-      if name == "agastya" or name == "Agastya":
-        urlopen("https://setgame.lentil1023.repl.co/clear")
-      urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
-      currentSet = SetStack() # Clear the current set
-      upCards = buildUpcards()
-      sub = 0
-      print("Removing conflicts between decks...")
-      for pos in tqdm(range(upCards.size())):
-          for deckpos in tqdm(range(deck.size())):
-              if cardEqual(upCards.getCard(pos), deck.getCard(deckpos-sub)):
-                  deck.remove(deckpos-sub)
-                  sub = sub + 1
-      upCards.displayInRows() # Display the upCards
-      description = input("What is the set (q to exit, n if you can't find it) ? ")
-      #if description == "leaderboard":
-       #   for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
-        #      leaders.append(str(urlopen("https://setgame.lentil1023.repl.co/getld").read())[1:])
-         #     for leader in leaders:
-          #        print(leader)
-
-
-      if description == "q": # If the user wants to quit:
-          keepPlaying = False # End the loop
-          score = 0 # Reset the score
-      elif description == "score": # If "score" keyword is entered
-          print("Your score is", score) # Tell the user their score
-      elif description == "size": # If "size" keyword is entered
-          print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
-      elif description == "n":
-          if deck.size() == 0:
-              print("No more cards are available.")
-          if upCards.size() < 21: # If the deck of cards is less than 21:
-              for x in range(3):
-                  upCards.add(deck.deal()) # Deal three more
-              upCards.writeToServer()
+    elif description == "q": # If the user wants to quit:
+        return False # End the loop
+        players[0].score = 0 # Reset the score
+    elif description == "score": # If "score" keyword is entered
+        print("Your score is", players[0].score) # Tell the user their score
+    elif description == "size": # If "size" keyword is entered
+        print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
+    elif description == "asdf": # Cheat code :P
+        print("Congratulations.")
+        print("Cheat mode has been enabled!")
+        cheat = True # Set cheat to True, run above routine
+    elif description == "aaa": # Another cheat-ish keyword
+        for x in range(upCards.size()):
+            upCards.remove(0) # Clear the upCards, allows developers to get to the endgame faster
+    else:
+      if len(description) != 8:
+        description = input("Type your set again please: ")
+      desc_one = description[0:2] # Get the first reference from user
+      desc_two = description[3:5] # Get the second reference
+      desc_three = description[6:8] # Get the third reference
+      describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
+      pos = 0 
+      while pos < upCards.size(): # Made by Advaita, finds the card referenced by each position given by the user
+          if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
+              currentSet.add(upCards.getCard(pos))
+              pos += 1
           else:
-              print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
-          score -= 1 # Lower the score by 1 every time the user types "n"
-
-      elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
-          print("Game over!") # End the game
-          keepPlaying = False
-
-      elif description == "ruheer":
-          if setInDeck(upCards):
-              print("Yes, there is a set here.")
-          else:
-              print("No sets were found here.")
-
-      elif not setEqual(buildUpcards(), upCards):
-          print("Too late!")
-      else:
-          desc_one = description[0:2] # Get the first reference from user
-          desc_two = description[3:5] # Get the second reference
-          desc_three = description[6:8] # Get the third reference
-          describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
-          pos = 0 
-          while pos < upCards.size():
-              if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
-                  currentSet.add(upCards.getCard(pos))
-                  pos += 1
-              else:
-                  pos += 1
-     
-        
+              pos += 1
       
-          if currentSet.isSet():
-              print(currentSet, end=" ")
-              print("This is a set!")
-              tobedeleted = []
-              for ref in describeSet:
-                  tobedeleted.append(converttopos(ref, upCards))
-              if tobedeleted[1] > tobedeleted[0]:
-                 tobedeleted[1] = tobedeleted[1] - 1
-              if tobedeleted[2] > tobedeleted[0]:
-                  if tobedeleted[2] > tobedeleted[1]:
-                      tobedeleted[2] = tobedeleted[2] - 2
-                  else:
-                      tobedeleted[2] = tobedeleted[2] - 1
-              elif tobedeleted[2] > tobedeleted[1]:
+      
+      if currentSet.isSet(): # If the set is a set
+          print(currentSet, "This is a set!")
+          tobedeleted = [] # Cards to be removed (part of the super-tricky debugging by Agastya)
+          for ref in describeSet: # For every reference in describeSet
+              tobedeleted.append(converttopos(ref, upCards)) # Append the numerical pos to the tobedeleted list
+          if tobedeleted[1] > tobedeleted[0]: # This is COMPLICATED: basically the computer runs through this set and deletes each card as it gets to it. Think of it as a tower of coins. The computer finds the coin it wants to remove based on the coin's position in the tower, and deletes that coin. But that makes all the coins above the deleted one come down one level, which changes their position by 1. That's what Agastya tries to mitigate here.
+              tobedeleted[1] = tobedeleted[1] - 1
+          if tobedeleted[2] > tobedeleted[0]:
+              if tobedeleted[2] > tobedeleted[1]:
+                  tobedeleted[2] = tobedeleted[2] - 2
+              else:
                   tobedeleted[2] = tobedeleted[2] - 1
-              for item in tobedeleted:
-                  print(upCards.getCard(item))
-                  upCards.remove(item)
-              if upCards.size() == 9 and deck.size() > 0:
-                  for b in range(3):
-                      upCards.add(deck.deal())
-              score = score + 1
-              upCards.writeToServer()
-          else:
-              print("Sorry, that isn't a set.")
-              score = score - 1
-  return False
+          elif tobedeleted[2] > tobedeleted[1]:
+              tobedeleted[2] = tobedeleted[2] - 1
+          for item in tobedeleted: # tobedeleted is correct, now all those cards can be removed
+              upCards.remove(item)
+          if upCards.size() == 9 and deck.size() > 0: # If the upCards is 9 and the deck size is not zero (there are still cards to pull out), then add three more cards to keep the size at 12
+              for b in range(3):
+                  upCards.add(deck.deal())
+          players[0].addScore(1)
+      else: # If it isn't a set
+          print("Sorry, that isn't a set.")
+          players[0].addScore(-1) # remove one point from the score
+    return True
+  
+  else:
+    global score
+    global gametype
+    score = 0
+    if name == "agastya" or name == "Agastya":
+      upCards.writeToServer()
+    urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
+    keepPlaying = True 
+    while keepPlaying: 
+        if name == "agastya" or name == "Agastya":
+          urlopen("https://setgame.lentil1023.repl.co/clear")
+        urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
+        currentSet = SetStack() # Clear the current set
+        upCards = buildUpcards()
+        compareCards = upCards
+        sub = 0
+        print("Removing conflicts between decks...")
+        for pos in tqdm(range(upCards.size())):
+            for deckpos in tqdm(range(deck.size())):
+                if cardEqual(upCards.getCard(pos), deck.getCard(deckpos-sub)):
+                    deck.remove(deckpos-sub)
+                    sub = sub + 1
+        upCards.displayInRows() # Display the upCards
+        description = input("What is the set (q to exit, n if you can't find it) ? ")
+        #if description == "leaderboard":
+        #   for x in range(int(str(urlopen("https://setgame.lentil1023.repl.co/numofplayers").read())[2:3])):
+          #      leaders.append(str(urlopen("https://setgame.lentil1023.repl.co/getld").read())[1:])
+          #     for leader in leaders:
+            #        print(leader)
+
+
+        if description == "q": # If the user wants to quit:
+            keepPlaying = False # End the loop
+            score = 0 # Reset the score
+        elif description == "score": # If "score" keyword is entered
+            print("Your score is", score) # Tell the user their score
+        elif description == "size": # If "size" keyword is entered
+            print("The size of the deck is", deck.size()) # Return the size of the deck (useful for debugging purposes)
+        elif description == "n":
+            if deck.size() == 0:
+                print("No more cards are available.")
+            if upCards.size() < 21: # If the deck of cards is less than 21:
+                for x in range(3):
+                    upCards.add(deck.deal()) # Deal three more
+                upCards.writeToServer()
+            else:
+                print("In 21 cards, there's a 100% chance of finding a set. Find a set already!") # Prompt the user to find the set if there are 21 cards
+            score -= 1 # Lower the score by 1 every time the user types "n"
+
+        elif deck.size() == 0 and not setInDeck(upCards): # If the size of the deck is zero and there are no sets in the upCards:
+            print("Game over!") # End the game
+            keepPlaying = False
+
+        elif description == "ruheer":
+            if setInDeck(upCards):
+                print("Yes, there is a set here.")
+            else:
+                print("No sets were found here.")
+
+        elif not setEqual(buildUpcards(), compareCards):
+            print("Too late!")
+        else:
+            desc_one = description[0:2] # Get the first reference from user
+            desc_two = description[3:5] # Get the second reference
+            desc_three = description[6:8] # Get the third reference
+            describeSet = [desc_one, desc_two, desc_three] # Create a set of descriptions
+            pos = 0 
+            while pos < upCards.size():
+                if (str(describeSet[0]) == converttoreference(pos, upCards)) or (str(describeSet[1]) == converttoreference(pos, upCards)) or (str(describeSet[2]) == converttoreference(pos, upCards)):
+                    currentSet.add(upCards.getCard(pos))
+                    pos += 1
+                else:
+                    pos += 1
+      
+          
+        
+            if currentSet.isSet():
+                print(currentSet, end=" ")
+                print("This is a set!")
+                tobedeleted = []
+                for ref in describeSet:
+                    tobedeleted.append(converttopos(ref, upCards))
+                if tobedeleted[1] > tobedeleted[0]:
+                  tobedeleted[1] = tobedeleted[1] - 1
+                if tobedeleted[2] > tobedeleted[0]:
+                    if tobedeleted[2] > tobedeleted[1]:
+                        tobedeleted[2] = tobedeleted[2] - 2
+                    else:
+                        tobedeleted[2] = tobedeleted[2] - 1
+                elif tobedeleted[2] > tobedeleted[1]:
+                    tobedeleted[2] = tobedeleted[2] - 1
+                for item in tobedeleted:
+                    print(upCards.getCard(item))
+                    upCards.remove(item)
+                if upCards.size() == 9 and deck.size() > 0:
+                    for b in range(3):
+                        upCards.add(deck.deal())
+                score = score + 1
+                upCards.writeToServer()
+            else:
+                print("Sorry, that isn't a set.")
+                score = score - 1
+    return False
 # Input:
 #   deck - SetStack which is the deck to draw new cards from
 #   players - list of Player
@@ -388,7 +385,7 @@ def playSetGame(deck, players):
                 cheat = False
             keep_playing = playRound(deck, upCards, players)  # repeatedly call playRound until the game is over
         else:
-            keep_playing = playRealtimeRound(deck, upCards, players)
+            keep_playing = playRound(deck, upCards, players, realtime=True)
    
 def play():
     global name
@@ -408,6 +405,12 @@ def play():
                         cards.add(Card(inp_one, inp_two, inp_three, inp_four))
         cards.shuffle()
     else:
+        if gametype == "y":
+              try:
+                from tqdm import tqdm
+              except:
+                os.system("pip3 install tqdm")
+                from tqdm import tqdm
         if name == "Agastya" or name == "agastya":
             os.system("python3 write.py")
         else:
