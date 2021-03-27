@@ -407,8 +407,10 @@ def play():
     else:
         if gametype == "y":
               try:
+                global tqdm
                 from tqdm import tqdm
               except:
+                global tqdm
                 os.system("pip3 install tqdm")
                 from tqdm import tqdm
         if name == "Agastya" or name == "agastya":
