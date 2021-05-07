@@ -432,7 +432,7 @@ def play():
                 from tqdm import tqdm
               except:
                 global tqdm
-                os.system("pip3 install tqdm")
+                os.system("pip3 install tqdm --user")
                 from tqdm import tqdm
         if name == "Agastya" or name == "agastya":
             os.system("python3 write.py")
