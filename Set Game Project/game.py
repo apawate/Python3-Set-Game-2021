@@ -167,9 +167,10 @@ def converttopos(ref, stack): # Does the opposite of the above function, convert
 # def setInDeck(deck):
   #   check all the possible combinations of 3 cards in this deck until a set is found
 def setInDeck(deck):
-  for i in range(deck.size()):
-    for j in range(deck.size()):
-      for k in range(deck.size()):
+    
+  for i in range(deck.size()) : 
+    for j in range(i + 1, deck.size()) : 
+        for k in range(j + 1, deck.size()) :
         check = SetStack()  
         if i == j or j == k or i == k:
           pass
