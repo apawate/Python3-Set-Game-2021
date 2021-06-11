@@ -298,6 +298,7 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
         for pos in tqdm(range(upCards.size())):
             for deckpos in tqdm(range(deck.size())):
                 if cardEqual(upCards.getCard(pos), deck.getCard(deckpos-sub)):
+                    print("Removing this card: ", deck.getCard(deckpos-sub))
                     deck.remove(deckpos-sub)
                     sub = sub + 1
         upCards.displayInRows() # Display the upCards
@@ -435,12 +436,18 @@ def play():
                 global tqdm
                 os.system("pip3 install tqdm --user")
                 from tqdm import tqdm
-        if name == "Agastya" or name == "agastya":
-            os.system("python3 write.py")
+        if str(urlopen("https://apawate.github.io/serverstatus").read())[2:-3] != "On, available for connection":
+            print(str(urlopen("https://apawate.github.io/serverstatus").read())[2:-3])
+            print("On, available for connection")
+            print("The server isn't available. Post an issue in the github: https://github.com/apawate/Python3-Set-Game-2021 if you want it open.")
+            return
         else:
-            print("Waiting for deck to be built...")
-            time.sleep(20)
-        cards = buildRealtimeDeck()
+            if name == "Agastya" or name == "agastya":
+                os.system("python3 write.py")
+            else:
+                print("Waiting for deck to be built...")
+                time.sleep(20)
+            cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
     while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
