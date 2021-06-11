@@ -171,18 +171,18 @@ def setInDeck(deck):
   for i in range(deck.size()) : 
     for j in range(i + 1, deck.size()) : 
         for k in range(j + 1, deck.size()) :
-        check = SetStack()  
-        if i == j or j == k or i == k:
-          pass
-        else:
-          check.add(deck.getCard(i))
-          check.add(deck.getCard(j))
-          check.add(deck.getCard(k))
-          if check.isSet():
-            print("Your set is: ", check)
-            return True
-          else:
-            continue
+            check = SetStack()  
+            if i == j or j == k or i == k:
+                pass
+            else:
+                check.add(deck.getCard(i))
+                check.add(deck.getCard(j))
+                check.add(deck.getCard(k))
+            if check.isSet():
+                print("Your set is: ", check)
+                return True
+            else:
+                continue
   return False
       # Nvm this looks really hard, I'll try and do it on my own time
         #What should i do then
