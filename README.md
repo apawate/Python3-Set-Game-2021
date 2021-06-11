@@ -40,7 +40,6 @@ RealTime mode is a multiplayer, realtime text-based version of the game. There i
 #### Important things to note
 
 * If the program says "Too late!", it means someone else got the set. :(
-* **VERY IMPORTANT: You must name one player "Agastya". It was a quick fix I made to a bug that had all the players writing to `upCards` - I had to choose one to do it, and this was the easiest (since I was always playing the game). In the future, I will make a fix to it.** 
 * I haven't thoroughly tested the endgame for RealTime mode yet, so it might crash the program.
 * RealTime mode won't run unless I enable the server on my end. Please tell me if you need it enabled. In the future, I'll put a status updater here to notify you if the server is on.
 
