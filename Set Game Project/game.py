@@ -22,7 +22,7 @@ import time
 
 name = ""
 gametype = ""
-
+firstplayer = ""
 
 
 class SetStack(StackOfCards): # SetStack class which inherits StackOfCards
@@ -192,6 +192,7 @@ def setInDeck(deck):
 
 cheat = False
 def playRound(deck, upCards, players, realtime=False): # playRound function, the main function that does everything needed for a set game
+  global firstplayer
   if not realtime:
     global cheat
     #keepPlaying = True 
@@ -281,13 +282,14 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
   else:
     global score
     global gametype
+    global firstplayer
     score = 0
-    if name == "agastya" or name == "Agastya":
+    print("First player: ", firstplayer)
+    if name == firstplayer:
       upCards.writeToServer()
-    urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
     keepPlaying = True 
     while keepPlaying: 
-        if name == "agastya" or name == "Agastya":
+        if name == firstplayer:
           urlopen("https://setgame.lentil1023.repl.co/clear")
         urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
         currentSet = SetStack() # Clear the current set
@@ -389,6 +391,7 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
 def playSetGame(deck, players): 
     global cheat
     global gametype
+    global firstplayer
     upCards = SetStack()
     score = 0 
     players[0].score = 0 
@@ -412,7 +415,10 @@ def playSetGame(deck, players):
    
 def play():
     global name
+    global score
     global gametype
+    global firstplayer
+    score = 0
     # get player(s) name
     name = input("What is your name? ")
     player = Player(name)
@@ -437,17 +443,16 @@ def play():
                 os.system("pip3 install tqdm --user")
                 from tqdm import tqdm
         if str(urlopen("https://apawate.github.io/serverstatus").read())[2:-3] != "On, available for connection":
-            print(str(urlopen("https://apawate.github.io/serverstatus").read())[2:-3])
-            print("On, available for connection")
             print("The server isn't available. Post an issue in the github: https://github.com/apawate/Python3-Set-Game-2021 if you want it open.")
             return
+        urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
+        firstplayer = str(urlopen("https://setgame.lentil1023.repl.co/first").read())[2:-1]
+        if name == firstplayer:
+            os.system("python3 write.py")
         else:
-            if name == "Agastya" or name == "agastya":
-                os.system("python3 write.py")
-            else:
-                print("Waiting for deck to be built...")
-                time.sleep(20)
-            cards = buildRealtimeDeck()
+            print("Waiting for deck to be built...")
+            time.sleep(40)
+        cards = buildRealtimeDeck()
     playSetGame(cards, players) # call playSetGame
     choice = input("Do you want to play again? (y/n) ") # Play again? (first time around)
     while choice == 'y': # While the choice is yes (also catches the "n" like an if statement)
