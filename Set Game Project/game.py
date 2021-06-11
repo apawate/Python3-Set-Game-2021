@@ -300,6 +300,7 @@ def playRound(deck, upCards, players, realtime=False): # playRound function, the
         for pos in tqdm(range(upCards.size())):
             for deckpos in tqdm(range(deck.size())):
                 if cardEqual(upCards.getCard(pos), deck.getCard(deckpos-sub)):
+                    print("Removing this card: ", deck.getCard(deckpos-sub))
                     deck.remove(deckpos-sub)
                     sub = sub + 1
         upCards.displayInRows() # Display the upCards
@@ -441,6 +442,9 @@ def play():
                 global tqdm
                 os.system("pip3 install tqdm --user")
                 from tqdm import tqdm
+        if str(urlopen("https://apawate.github.io/serverstatus").read())[2:-3] != "On, available for connection":
+            print("The server isn't available. Post an issue in the github: https://github.com/apawate/Python3-Set-Game-2021 if you want it open.")
+            return
         urlopen("https://setgame.lentil1023.repl.co/init" + "?score=" + str(score) + "&name=" + name)
         firstplayer = str(urlopen("https://setgame.lentil1023.repl.co/first").read())[2:-1]
         if name == firstplayer:
