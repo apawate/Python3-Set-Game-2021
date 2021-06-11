@@ -41,5 +41,5 @@ RealTime mode is a multiplayer, realtime text-based version of the game. There i
 
 * If the program says "Too late!", it means someone else got the set. :(
 * I haven't thoroughly tested the endgame for RealTime mode yet, so it might crash the program.
-* RealTime mode won't run unless I enable the server on my end. Please tell me if you need it enabled. [Server status](https://apawate.github.io/status#set)
+* RealTime mode won't run unless I enable the server on my end. Please tell me if you need it enabled via an issue. 
 
